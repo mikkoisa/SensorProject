@@ -20,15 +20,15 @@
   
   
 # Week 2 (Early plan):
-  - Implement compass-view functionality:
-    - Get sensor data (accelerometer?)
-    - Do the math to get speed in real time and then time of arrival
+- Implement compass-view functionality:
+  - Get sensor data (accelerometer?)
+  - Do the math to get speed in real time and then time of arrival
   
-  - Finish AR functionality
+- Finish AR functionality
   
-  - Polish UI
+- Polish UI
   
-  - Implement Settings page
+- Implement Settings page
   
 # Week 3 (Early plan):
   - Implement sensors
