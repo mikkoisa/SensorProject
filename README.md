@@ -18,5 +18,21 @@ Map API functionality:
   - Compass-view
   - AR-view?
   
+  
+Week 2 (Early plan):
+  Implement compass-view
+  
+  Finish AR functionality
+  
+  Polish UI
+  
+Week 3 (Early plan):
+  Ipmlement sensors
+  
+  Finish UI
+  
+  Polish AR-view
+  
+  
  
  
