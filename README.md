@@ -7,10 +7,10 @@ Map API functionality:
   - Connect to API
   - 
  
-Basic AR functionality prototype using Map API coordinates
+ Basic AR functionality prototype using Map API coordinates
   -
   
-Basic UI prototype:
+ Basic UI prototype:
   -
   
   
