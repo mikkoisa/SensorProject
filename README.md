@@ -2,36 +2,38 @@
 
 # Week 1 TODO:
 
-*Map API functionality:
+Map API functionality:
   - Choose which map to use (Google, OpenStreetMap?)
   - Connect to API
   - Get the route coordinations and data
   
  
- *Basic AR functionality prototype using Map API coordinates
+ Basic AR functionality prototype using Map API coordinates
   - Display something in target destination coordinates
   
   
   
- *Basic UI prototype:
+ Basic UI prototype:
   - Map-view
   - Compass-view
   - AR-view?
   
   
 # Week 2 (Early plan):
-  - *Implement compass-view
+  - Implement compass-view
   
-  - *Finish AR functionality
+  - Finish AR functionality
   
-  - *Polish UI
+  - Polish UI
+  
+  - Implement Settings page
   
 # Week 3 (Early plan):
-  - *Ipmlement sensors
+  - Ipmlement sensors
   
-  - *Finish UI
+  - Finish UI
   
-  - *Polish AR-view
+  - Polish AR-view
   
   
  
