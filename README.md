@@ -8,9 +8,9 @@ Map API functionality:
   - 
  
  Basic AR functionality prototype using Map API coordinates
-  -
+  - Display something in target destination coordinates
   
  Basic UI prototype:
-  -
+  - Map-view, AR-view
   
   
