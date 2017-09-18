@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SensorProject</string>
+    <string name="btnTest">This is a test</string>
 </resources>
