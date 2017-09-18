@@ -1,6 +1,6 @@
 # SensorProject
 
-Week 1 TODO:
+#Week 1 TODO:
 
 Map API functionality:
   - Choose which map to use (Google, OpenStreetMap?)
