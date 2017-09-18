@@ -20,7 +20,9 @@ Map API functionality:
   
   
 # Week 2 (Early plan):
-  - Implement compass-view functionality
+  - Implement compass-view functionality:
+    - Get sensor data (accelerometer?)
+    - Do the math to get speed in real time and then time of arrival
   
   - Finish AR functionality
   
