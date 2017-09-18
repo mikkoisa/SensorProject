@@ -33,7 +33,7 @@
 # Week 3 (Early plan):
   - Implement sensors
   
-  - Finish UI
+  - Finish UI yo
   
   - Polish AR-view
   
