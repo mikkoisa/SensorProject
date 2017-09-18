@@ -20,7 +20,7 @@ Map API functionality:
   
   
 # Week 2 (Early plan):
-  - Implement compass-view
+  - Implement compass-view functionality
   
   - Finish AR functionality
   
