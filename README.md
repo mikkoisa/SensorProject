@@ -8,12 +8,12 @@
   - Get the route coordinations and data
   
  
- - Basic AR functionality prototype using Map API coordinates
+- Basic AR functionality prototype using Map API coordinates
   - Display something in target destination coordinates
   
   
   
- - Basic UI prototype:
+- Basic UI prototype:
   - Map-view
   - Compass-view
   - AR-view?
