@@ -29,7 +29,7 @@ Map API functionality:
   - Implement Settings page
   
 # Week 3 (Early plan):
-  - Ipmlement sensors
+  - Implement sensors
   
   - Finish UI
   
