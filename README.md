@@ -1,6 +1,6 @@
 # SensorProject
 
-#Week 1 TODO:
+# Week 1 TODO:
 
 Map API functionality:
   - Choose which map to use (Google, OpenStreetMap?)
@@ -19,19 +19,19 @@ Map API functionality:
   - AR-view?
   
   
-Week 2 (Early plan):
-  Implement compass-view
+# Week 2 (Early plan):
+  - Implement compass-view
   
-  Finish AR functionality
+  - Finish AR functionality
   
-  Polish UI
+  - Polish UI
   
-Week 3 (Early plan):
-  Ipmlement sensors
+# Week 3 (Early plan):
+  - Ipmlement sensors
   
-  Finish UI
+  - Finish UI
   
-  Polish AR-view
+  - Polish AR-view
   
   
  
