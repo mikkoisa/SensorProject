@@ -2,21 +2,21 @@
 
 # Week 1 TODO:
 
-- Map API functionality: Simo    **Done**
+- Map API functionality: Simo   **-Done**
   - Choose which map to use (Google, OpenStreetMap?)
   - Connect to API
   - Get the route coordinations and data
   
  
-- Basic AR functionality prototype using Map API coordinates: Mikko, Simo     **Done (with pre-defined coordintaes)**
+- Basic AR functionality prototype using Map API coordinates: Mikko, Simo     **-Done (with pre-defined coordintaes)**
   - Display something in target destination coordinates
   
   
   
 - Basic UI prototype: Mikko, Simo
-  - Map-view  **Done**
-  - Compass-view  **Done**
-  - AR-view?  **Roughly done**
+  - Map-view  **-Done**
+  - Compass-view  **-Done**
+  - AR-view?  **-Roughly done**
   
   
 # Week 2 TODO:
