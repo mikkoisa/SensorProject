@@ -32,9 +32,9 @@
   - Get sensor data (accelerometer?)
   - Do the math to get speed in real time and then time of arrival
   
-- Develop some UI Simo, Mikko
+- Develop some UI Simo, Mikko **-Done**
   
-- Implement Settings page Simo, Mikko
+- Implement Settings page Simo, Mikko **-Roughly done**
   
 # Week 3 (Early plan):
   - Implement sensors
@@ -42,3 +42,5 @@
   - Finish UI yo
   
   - Polish AR-view
+  
+  - add permission requests
