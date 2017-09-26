@@ -26,6 +26,7 @@
 - Enhance the Ar-view functionality: Simo, Mikko
   - Try to make it more stable by eliminating the effect of minor tiliting of the device
   - Make better direction indicators: 3d arrow, maybe use open-GL?
+  - Fix ratio issues
 
 - External sensor Mikko, Simo
   - Get sensor data (accelerometer?)
