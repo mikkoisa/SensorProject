@@ -20,7 +20,7 @@
   
   
 # Week 2 TODO:
-- Constant location update: Mikko
+- Constant location update: Mikko **-Done**
 - Input of destinaton address and retrieve the coordinates from map-API to be used by the app: Simo
 
 - Enhance the Ar-view functionality: Simo, Mikko
