@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">SensorProject</string>
     <string name="btnTest">This is a test</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="dirkey">AIzaSyDYMM8rukB5b4OMjuzn2isBL7XmCUauVlU</string>
+    <string name="title_activity_maps_paksa">MapPaska</string>
 </resources>

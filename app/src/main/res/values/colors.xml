@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimaryDark">#dadada</color>
+    <color name="colorPrimaryDarkSecondary">#898989</color>
+    <color name="colorPrimary">#262625</color>
+    <color name="colorPrimarySuperDark">#000000</color>
+    <color name="colorAccent">#7dadb3</color>
+    <color name="paska">#00ffffff</color>
+
+
 </resources>

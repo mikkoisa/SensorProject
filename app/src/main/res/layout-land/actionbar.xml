@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.Toolbar xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+
+    android:contentInsetStart="0dp"
+    android:contentInsetLeft="0dp"
+    android:contentInsetRight="0dp"
+    android:contentInsetEnd="0dp"
+    app:contentInsetLeft="0dp"
+    app:contentInsetStart="0dp"
+    app:contentInsetRight="0dp"
+    app:contentInsetEnd="0dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+
+    >
+
+        <TableRow>
+            <TextView android:id="@+id/titlebar"
+                android:text="Settings"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:visibility="gone"
+                android:textSize="17sp"
+                android:foregroundGravity="center|center_horizontal"
+                android:gravity="center_horizontal"
+                android:textAlignment="center"
+                android:contentInsetStart="0dp"
+                android:contentInsetLeft="0dp"
+                android:contentInsetRight="0dp"
+                android:contentInsetEnd="0dp"
+
+
+
+                />
+
+            <SearchView android:id="@+id/searchbar"
+
+                android:showDividers="none"
+                android:iconifiedByDefault="false"
+                android:visibility="visible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:queryHint="Search"
+                android:gravity="left"
+                android:paddingLeft="-22dp"
+
+                android:paddingRight="0dp"
+                app:iconifiedByDefault="false"
+
+                app:queryHint="Search"
+
+
+                android:textStyle="bold"
+                android:background="@color/colorPrimaryDark"
+
+
+                android:layout_alignParentTop="true"
+                tools:ignore="MissingPrefix" />
+
+
+        </TableRow>
+
+
+</TableLayout>
+    </android.support.v7.widget.Toolbar>

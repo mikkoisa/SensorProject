@@ -14,7 +14,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.mikko.sensorproject.R;
+
+import com.example.mikko.R;
 
 import java.io.IOException;
 import java.util.ArrayList;

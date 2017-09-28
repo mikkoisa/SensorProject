@@ -1,28 +1,19 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent">
-
-
-
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:clickable="true"
-    android:background="@color/paska"
     android:focusableInTouchMode="true" >
-
-
 
     <FrameLayout
         android:orientation="vertical"
 
-        android:layout_width="wrap_content"
+        android:layout_width="640px"
         android:id="@+id/camera_fragment_placeholder"
-        android:layout_height="640px"></FrameLayout>
+        android:layout_height="wrap_content"></FrameLayout>
     <LinearLayout
         android:orientation="vertical"
 
@@ -31,12 +22,6 @@
 
         android:layout_height="wrap_content"></LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" android:textSize="70px"
-        android:text="ASDDDDDDSD!!!!!!"/>
+
 
 </LinearLayout>
-
-
-</FrameLayout>

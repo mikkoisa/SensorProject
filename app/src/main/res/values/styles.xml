@@ -1,11 +1,43 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:contentInsetLeft">0dp</item>
+        <item name="android:contentInsetRight">0dp</item>
+    </style>
+
+    <style name="CustomTheme" parent="Theme.AppCompat.Light">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:popupBackground">@color/paska</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/colorPrimaryDark</item>
+        <item name="android:color">@color/colorPrimaryDark</item>
+        <item name="android:colorPrimary">@color/colorPrimary</item>
+        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="android:textColorHint">@color/colorPrimaryDark</item>
+        <item name="android:textColorSecondary">@color/colorPrimaryDarkSecondary</item>
+
+        <item name="android:textColorHighlight">@color/colorAccent</item>
+        <item name="android:selectableItemBackground">@color/colorAccent</item>
+        <item name="android:colorControlActivated">@color/colorAccent</item>
+        <item name="android:colorActivatedHighlight">@color/colorAccent</item>
+        <item name="android:colorBackgroundCacheHint">@color/colorAccent</item>
+        <item name="android:statusBarColor">@color/colorPrimarySuperDark</item>
+        <item name="android:textSelectHandle">@color/colorAccent</item>
+
+
+
+        <item name="android:contentInsetLeft">0dp</item>
+        <item name="android:contentInsetRight">0dp</item>
+        <item name="contentInsetStart">0dp</item>
+
+
+
+
+
     </style>
 
 </resources>
