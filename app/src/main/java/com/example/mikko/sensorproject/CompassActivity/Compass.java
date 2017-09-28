@@ -176,6 +176,7 @@ public class Compass implements SensorEventListener {
         private Location loc;
         double mLatitude = 1;
         double mLongitude = 1;
+        double speed = 1;
         private boolean started = false;
 
         //The "main-activity" of the async task class
@@ -201,8 +202,8 @@ public class Compass implements SensorEventListener {
         //These are the settings used for the request
         void createLocationRequest() {
             mLocationRequest = new LocationRequest();
-            mLocationRequest.setInterval(10000);
-            mLocationRequest.setFastestInterval(5000);
+            mLocationRequest.setInterval(1000);
+            mLocationRequest.setFastestInterval(1000);
             mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         }
 
@@ -213,6 +214,7 @@ public class Compass implements SensorEventListener {
                 public void onLocationResult(LocationResult locationResult) {
                     super.onLocationResult(locationResult);
                     loc = locationResult.getLastLocation();
+                    speed = loc.getSpeed();
                     publishProgress(loc.getLatitude(), loc.getLongitude());
                 }
             };
@@ -241,7 +243,7 @@ public class Compass implements SensorEventListener {
             Log.i("New location: " , String.valueOf(progress[0]));
             loclat = progress[0];
             loclon = progress[1];
-            //tv.setText(String.valueOf(loclat) + "\n" + String.valueOf(loclon));
+            tv.setText(String.valueOf(loclat) + "\n" + String.valueOf(loclon) + "\n" + String.valueOf(speed));
         }
 
     }

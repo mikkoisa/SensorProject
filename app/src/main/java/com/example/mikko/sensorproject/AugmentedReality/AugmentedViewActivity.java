@@ -16,6 +16,8 @@ import android.widget.TextView;
 
 
 import com.example.mikko.R;
+import com.example.mikko.sensorproject.CompassActivity.Compass;
+import com.example.mikko.sensorproject.R;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,7 +53,6 @@ public class AugmentedViewActivity extends Activity implements SurfaceHolder.Cal
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         locDesc = (TextView)findViewById(R.id.txtLocation);
 
-
         //generate surface view
         setupLayout();
         //connect to location api etc.
@@ -81,8 +82,8 @@ public class AugmentedViewActivity extends Activity implements SurfaceHolder.Cal
     //Set target point
     private void setTargetPoint() {
         targetPoint = new TargetPoint(
-                60.223252,
-                24.805192
+                60.171865,
+                24.812491
         );
     }
     //Calculate the direction where the given target point is (in a coordinate plane)
@@ -98,6 +99,7 @@ public class AugmentedViewActivity extends Activity implements SurfaceHolder.Cal
         phiAngle = Math.atan(tanPhi);
         phiAngle = Math.toDegrees(phiAngle);
 
+        //TODO: some directions dont work
         if (dX > 0 && dY > 0) { // First quarter in coordinate system
             return azimuth = phiAngle;
         } else if (dX < 0 && dY > 0) { // Second quarter
@@ -202,8 +204,6 @@ public class AugmentedViewActivity extends Activity implements SurfaceHolder.Cal
         imgArrowLeft = (ImageView)findViewById(R.id.imgLeftArrow);
         imgArrowRight = (ImageView)findViewById(R.id.imgRightArrow);
 
-
-
         double minAngle = calculateAzimuthAccuracy(azimuthTheoretical).get(0);
         double maxAngle = calculateAzimuthAccuracy(azimuthTheoretical).get(1);
 
@@ -229,8 +229,6 @@ public class AugmentedViewActivity extends Activity implements SurfaceHolder.Cal
 
         updateDescription();
     }
-
-
 
     @Override
     protected void onStop() {
