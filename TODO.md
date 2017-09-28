@@ -35,6 +35,22 @@
 - Develop some UI Simo, Mikko **-Done**
   
 - Implement Settings page Simo, Mikko **-Roughly done**
+
+
+## MUISTILISTA
+-korjaa landscape 
+-korjaa kameran ratio	
+-korjaa mappihaku (tapiola)	
+-autocomplete searchviewiin
+-mappiin lähtösijainti	
+-mappi näyttämään tietoa hausta
+-mapin pyöriminen
+-ar			
+-service/broadcast receiver	
+-settings/preferences		
+-metawear/bluetooth	
+-kompassin ui			
+-matkan kesto nopeuden perusteella
   
 # Week 3 (Early plan):
   - Implement sensors
