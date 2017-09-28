@@ -1,6 +1,7 @@
 package com.example.mikko.sensorproject;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.location.Location;
@@ -55,7 +56,10 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
     private GoogleMap googleMap;
     private MapView mapview;
     private CurrentLocation currentLocation;
+    private double desLat = 1.1;
+    private double desLon = 2.2;
 
+    private DestinationInterface dest;
 
     public MapSectionFragment() {
 
@@ -67,11 +71,17 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
         MapsInitializer.initialize(getContext());
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        dest = (DestinationInterface) context;
+    }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
-
 
         // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
         MapsInitializer.initialize(this.getActivity());
@@ -127,6 +137,7 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
         setupGoogleMapScreenSettings(googleMap);
         DirectionsResult results = getDirectionsDetails("Vanha maantie 6 espoo","Leppävaaran asema",TravelMode.WALKING);
         if (results != null) {
+
             addPolyline(results, googleMap);
             moveCamera(results.routes[0], googleMap);
             addMarkers(results, googleMap);
@@ -140,10 +151,12 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
         DirectionsResult results = getDirectionsDetails("Vanha maantie 6 espoo",query,TravelMode.WALKING);
         if (results != null) {
             googleMap.clear();
+            desLat = results.routes[0].legs[0].endLocation.lat;
+            desLon = results.routes[0].legs[0].endLocation.lng;
+            dest.changeLocation(desLat, desLon);
             addPolyline(results, googleMap);
             moveCamera(results.routes[0], googleMap);
             addMarkers(results, googleMap);
-
 
         }
 
@@ -238,5 +251,13 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
     public void onMyLocationClick(@NonNull Location location) {
         Toast.makeText(getContext(), "Current location:\n" + location, Toast.LENGTH_LONG).show();
 
+    }
+
+    public double getDestLat() {
+        return desLat;
+    }
+
+    public double getDesLon() {
+        return desLon;
     }
 }

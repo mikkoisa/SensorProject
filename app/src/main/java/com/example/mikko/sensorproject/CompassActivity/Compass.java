@@ -17,6 +17,7 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.mikko.sensorproject.MapSectionFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -39,6 +40,8 @@ public class Compass implements SensorEventListener {
     private Context con;
     TextView tv;
 
+    private MapSectionFragment map;
+
     //Default location coordinates (not really used)
     private double loclat = 60.221951;
     private double loclon = 24.804374;
@@ -58,6 +61,8 @@ public class Compass implements SensorEventListener {
     }
 
     void start() {
+
+
         GetLoc myTask = new GetLoc();
         myTask.execute();
         sensorManager.registerListener(this, gsensor, SensorManager.SENSOR_DELAY_GAME);
@@ -68,6 +73,10 @@ public class Compass implements SensorEventListener {
         sensorManager.unregisterListener(this);
     }
 
+    public void setCoord(Double lat, Double lon){
+        deslat = lon;
+        deslon = lat;
+    }
 
     //This gets called constantly when the sensors change
     @Override
@@ -243,7 +252,7 @@ public class Compass implements SensorEventListener {
             Log.i("New location: " , String.valueOf(progress[0]));
             loclat = progress[0];
             loclon = progress[1];
-            tv.setText(String.valueOf(loclat) + "\n" + String.valueOf(loclon) + "\n" + String.valueOf(speed));
+            tv.setText(String.valueOf(loclat) + "\n" + String.valueOf(loclon) + "\n" + String.valueOf(speed) + "\n" + String.valueOf(deslat)+ "\n" + String.valueOf(deslon)  );
         }
 
     }

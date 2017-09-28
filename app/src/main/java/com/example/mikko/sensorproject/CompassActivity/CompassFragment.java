@@ -102,5 +102,9 @@ public class CompassFragment extends Fragment {
         compass.stop();
     }
 
+    public void setDest(Double lat, Double lon){
+        compass.setCoord(lat, lon);
+    }
+
 
 }

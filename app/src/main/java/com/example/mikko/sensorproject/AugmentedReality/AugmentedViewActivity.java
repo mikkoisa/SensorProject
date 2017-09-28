@@ -16,8 +16,6 @@ import android.widget.TextView;
 
 
 import com.example.mikko.R;
-import com.example.mikko.sensorproject.CompassActivity.Compass;
-import com.example.mikko.sensorproject.R;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,6 +51,7 @@ public class AugmentedViewActivity extends Activity implements SurfaceHolder.Cal
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         locDesc = (TextView)findViewById(R.id.txtLocation);
 
+
         //generate surface view
         setupLayout();
         //connect to location api etc.
@@ -82,8 +81,8 @@ public class AugmentedViewActivity extends Activity implements SurfaceHolder.Cal
     //Set target point
     private void setTargetPoint() {
         targetPoint = new TargetPoint(
-                60.171865,
-                24.812491
+                60.223252,
+                24.805192
         );
     }
     //Calculate the direction where the given target point is (in a coordinate plane)

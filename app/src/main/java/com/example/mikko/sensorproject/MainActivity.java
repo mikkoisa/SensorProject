@@ -24,7 +24,6 @@ import android.widget.FrameLayout;
 import android.widget.SearchView;
 
 import com.example.mikko.R;
-import com.example.mikko.sensorproject.CompassActivity.CompassActivity;
 import com.example.mikko.sensorproject.CompassActivity.CompassFragment;
 
 /**
@@ -43,7 +42,7 @@ import com.example.mikko.sensorproject.CompassActivity.CompassFragment;
 */
 
 
-public class MainActivity extends AppCompatActivity implements DragInterface, ChangeFragmentListener{
+public class MainActivity extends AppCompatActivity implements DragInterface, ChangeFragmentListener, DestinationInterface{
 
     private CameraFragment camerafrag;
     private MapSectionFragment mapfrag;
@@ -310,6 +309,13 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
             fm.replace(R.id.camera_fragment_placeholder, camerafrag, "camera");
             fm.commit();
             currentFragment = "camera";
+        }
+    }
+
+    @Override
+    public void changeLocation(Double longitude, Double latitude) {
+        if (currentFragment == "compass") {
+            compassfrag.setDest(latitude, longitude);
         }
     }
 }
