@@ -21,7 +21,7 @@
   
 # Week 2 TODO:
 - Constant location update: Mikko **-Done**
-- Input of destinaton address and retrieve the coordinates from map-API to be used by the app: Simo **-Roughly done**
+- Input of destinaton address and retrieve the coordinates from map-API to be used by the app: Simo **Done**
 
 - Enhance the Ar-view functionality: Simo, Mikko
   - Try to make it more stable by eliminating the effect of minor tiliting of the device
@@ -38,15 +38,15 @@
 
 
 ## MUISTILISTA
--korjaa landscape 
+~~-korjaa landscape ~~
 -korjaa kameran ratio	
 -korjaa mappihaku (tapiola)	
 -autocomplete searchviewiin
--mappiin lähtösijainti	
+~~-mappiin lähtösijainti	~~
 -mappi näyttämään tietoa hausta
 -mapin pyöriminen
 -ar			
--service/broadcast receiver	
+~~-service/broadcast receiver	~~
 -settings/preferences		
 -metawear/bluetooth	
 -kompassin ui			
