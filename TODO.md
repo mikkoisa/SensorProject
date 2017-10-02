@@ -38,15 +38,15 @@
 
 
 ## MUISTILISTA
-~~-korjaa landscape ~~
+~~korjaa landscape~~
 -korjaa kameran ratio	
 -korjaa mappihaku (tapiola)	
 -autocomplete searchviewiin
-~~-mappiin lähtösijainti	~~
+~~mappiin lähtösijainti~~
 -mappi näyttämään tietoa hausta
 -mapin pyöriminen
 -ar			
-~~-service/broadcast receiver	~~
+~~service/broadcast receiver~~
 -settings/preferences		
 -metawear/bluetooth	
 -kompassin ui			
