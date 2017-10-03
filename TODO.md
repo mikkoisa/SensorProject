@@ -40,8 +40,8 @@
 ## MUISTILISTA
 ~~korjaa landscape~~
 -korjaa kameran ratio	
--korjaa mappihaku (tapiola)	
--autocomplete searchviewiin
+~~korjaa mappihaku (tapiola)~~
+~~autocomplete searchviewiin~~
 ~~mappiin lähtösijainti~~
 -mappi näyttämään tietoa hausta
 -mapin pyöriminen
