@@ -13,7 +13,7 @@ public class DragUtils {
     public float lastY, lastX;
 
 
-    public void setupViewDrag(View v, final int rotation, final DragInterface intterfeis) {
+    public void setupViewDrag(View v, final DragInterface intterfeis) {
         v.setOnTouchListener(new View.OnTouchListener() {
 
 
@@ -48,7 +48,7 @@ public class DragUtils {
                         posY += distanceMoved;
                         posX += distanceMovedX;
                         //System.out.println("distane moved: " + posY);
-                        intterfeis.dragData(posX,posY, rotation);
+                        intterfeis.dragData(posX,posY);
 
                         lastY = y;
                         lastX = x;

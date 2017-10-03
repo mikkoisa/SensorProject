@@ -40,6 +40,8 @@ public class Compass implements SensorEventListener {
     private Context con;
     TextView tv;
 
+
+
     private MapSectionFragment map;
 
     //Default location coordinates (not really used)
@@ -58,6 +60,13 @@ public class Compass implements SensorEventListener {
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         gsensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         msensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+    }
+
+    public double getDesLat() {
+        return deslat;
+    }
+    public double getDesLon() {
+        return deslon;
     }
 
     void start() {

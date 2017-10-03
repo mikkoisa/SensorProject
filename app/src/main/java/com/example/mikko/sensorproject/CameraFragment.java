@@ -100,7 +100,7 @@ public class CameraFragment extends Fragment {
 
 
         Display display = ((WindowManager)getActivity().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-        dragUtils.setupViewDrag(v, display.getRotation(), dragCallback);
+        dragUtils.setupViewDrag(v, dragCallback);
 
         cornerIcon = (ImageView)v.findViewById(R.id.cornericon);
         cornerIcon.setOnClickListener(new View.OnClickListener() {

@@ -4,7 +4,6 @@
 
 
 
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainlayout"
@@ -31,12 +30,36 @@
 
         android:layout_height="wrap_content"></LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" android:textSize="70px"
-        android:text="ASDDDDDDSD!!!!!!"/>
+
+
 
 </LinearLayout>
 
+    <!---
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_marginStart="40dp"
+            android:id="@+id/tekstview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
+    -->
+    <FrameLayout
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ListView
+
+            android:id="@+id/suggestions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            >
+        </ListView>
+    </FrameLayout>
 
 </FrameLayout>

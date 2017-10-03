@@ -36,6 +36,8 @@
         android:theme="@style/CustomTheme"
         >
 
+
+
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -56,6 +58,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name=".sensorproject.LocationListenerService"  android:enabled="true" />
 
     </application>
 

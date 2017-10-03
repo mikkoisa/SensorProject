@@ -5,5 +5,5 @@ package com.example.mikko.sensorproject;
  */
 
 public interface DragInterface {
-    void dragData(float width, float height, int rotation);
+    void dragData(float width, float height);
 }

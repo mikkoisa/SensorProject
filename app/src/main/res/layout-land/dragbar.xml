@@ -9,5 +9,6 @@
     <ImageView android:layout_width="wrap_content"
         android:layout_gravity="right"
         android:layout_height="wrap_content"
+        android:scaleX="1.2"
         android:src="@drawable/cropped_header_land" />
 </FrameLayout>

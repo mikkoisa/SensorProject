@@ -61,7 +61,7 @@ public class CompassFragment extends Fragment {
         compass.tv = (TextView)v.findViewById(R.id.txtTest);
 
         Display display = ((WindowManager)getActivity().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-        dragUtils.setupViewDrag(v, display.getRotation(), dragCallback);
+        dragUtils.setupViewDrag(v, dragCallback);
 
         onStart();
 
@@ -72,6 +72,11 @@ public class CompassFragment extends Fragment {
                 changeFragmentListener.changeEvent("camera");
             }
         });
+
+        if (savedInstanceState != null) {
+
+            setDest(savedInstanceState.getDouble("lat"), savedInstanceState.getDouble("lon"));
+        }
 
         return v;
     }
@@ -106,5 +111,11 @@ public class CompassFragment extends Fragment {
         compass.setCoord(lat, lon);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
 
+        outState.putDouble("lat", compass.getDesLat());
+        outState.putDouble("lon", compass.getDesLon());
+    }
 }
