@@ -213,8 +213,10 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
     protected void onPause() {
         super.onPause();
         stopService(new Intent(this, LocationListenerService.class));
-        if (broadcastReceiver != null) {
+        try {
             unregisterReceiver(broadcastReceiver);
+        } catch(IllegalArgumentException e) {
+            Log.e("onpause","unregisteriging broadcast", e);
         }
     }
 
@@ -251,6 +253,7 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
     protected void onSaveInstanceState(Bundle outState) {
 
         super.onSaveInstanceState(outState);
+
 
 
         FrameLayout fl = (FrameLayout) findViewById(R.id.camera_fragment_placeholder);
@@ -403,6 +406,7 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
         MapSectionFragment mapFragment = (MapSectionFragment) getSupportFragmentManager().findFragmentByTag("map");
         if (mapFragment != null) {
             mapFragment.searchForLocation(query);
+            this.getCurrentFocus().clearFocus();
         }
     }
 
