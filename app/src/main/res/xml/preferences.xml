@@ -31,7 +31,6 @@
             android:summary="Enter Your Complete Name"
             android:dialogTitle="Your Name"
             android:dialogMessage="Enter Your Complete Name"
-            android:defaultValue="false"
             android:inputType="textCapWords"/>
 
         <EditTextPreference
@@ -40,7 +39,6 @@
             android:summary="Enter Your Email Address"
             android:dialogTitle="Enter Your Email Address"
             android:dialogMessage="Enter Your Email Address"
-            android:defaultValue="false"
             android:inputType="textEmailAddress"/>
 
     </PreferenceCategory>
@@ -53,7 +51,7 @@
 
         <RingtonePreference
             android:key="notification_ringtone"
-            android:title="Notification Ringtone"
+            android:title="Miikka's game corner"
             android:summary="Customise Notification Ringtone for you"
             android:dialogTitle="Notification Ringtone"
             android:dialogMessage="Customise Notification Ringtone for you"/>

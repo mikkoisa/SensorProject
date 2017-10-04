@@ -40,6 +40,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.example.mikko.R;
+import com.example.mikko.sensorproject.CompassActivity.Compass;
 import com.example.mikko.sensorproject.CompassActivity.CompassFragment;
 import com.example.mikko.sensorproject.autocomplete.Predictions;
 import com.google.android.gms.vision.text.Text;
@@ -514,4 +515,11 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
             compassfrag.setDest(latitude, longitude);
         }
     }
+
+    public void getAzimuth(double azimuth) {
+        if (azimuth > - 10 && azimuth < 10) {
+           Log.i("Toimmiiii!!: " , String.valueOf(azimuth));
+        }
+    }
+
 }

@@ -16,12 +16,17 @@ import android.widget.TextView;
 
 
 import com.example.mikko.R;
+import com.example.mikko.sensorproject.DestinationInterface;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AugmentedViewActivity extends Activity implements SurfaceHolder.Callback, CurrentLocation.OnLocationChangedListener, CurrentAzimuth.OnAzimuthChangedListener {
+
+    private double screenWidth = 0d, screenHeight = 0d;
+
+    private DestinationInterface dest;
 
     private Camera mCamera;
 
@@ -32,8 +37,8 @@ public class AugmentedViewActivity extends Activity implements SurfaceHolder.Cal
     private CurrentAzimuth myCurrentAzimuth;
     private TargetPoint targetPoint;
 
-    private double myLatitude = 0;
-    private double myLongitude = 0;
+    private double myLatitude = 60.1729325;
+    private double myLongitude = 24.8125536;
 
     private double azimuthReal = 0;
     private double azimuthTheoretical = 0;
@@ -81,8 +86,8 @@ public class AugmentedViewActivity extends Activity implements SurfaceHolder.Cal
     //Set target point
     private void setTargetPoint() {
         targetPoint = new TargetPoint(
-                60.223252,
-                24.805192
+                60.173551,
+                24.815205
         );
     }
     //Calculate the direction where the given target point is (in a coordinate plane)
@@ -188,16 +193,22 @@ public class AugmentedViewActivity extends Activity implements SurfaceHolder.Cal
 
     @Override
     public void onLocationChanged(Location currentLocation) {
-        myLatitude = currentLocation.getLatitude();
-        myLongitude = currentLocation.getLongitude();
+        //myLatitude = currentLocation.getLatitude();
+       // myLongitude = currentLocation.getLongitude();
         azimuthTheoretical = calculateTheoreticalAzimuth();
         updateDescription();
     }
 
     @Override
     public void onAzimuthChanged(float azimuthChangedFrom, float azimuthChangedTo) {
+
+
         azimuthReal = azimuthChangedTo;
         azimuthTheoretical = calculateTheoreticalAzimuth();
+
+        double posInPx = azimuthReal * (screenWidth / 90d);
+
+
 
         imgArrowTarget = (ImageView) findViewById(R.id.imgArrow);
         imgArrowLeft = (ImageView)findViewById(R.id.imgLeftArrow);
@@ -210,7 +221,7 @@ public class AugmentedViewActivity extends Activity implements SurfaceHolder.Cal
         //This diplays the correct arrow
         if (isBetween(minAngle, maxAngle, azimuthReal)) {
             imgArrowLeft.setVisibility(View.INVISIBLE);
-            imgArrowTarget.setVisibility(View.VISIBLE);
+
             imgArrowRight.setVisibility(View.INVISIBLE);
         } else if (isBetween(minAngle, maxAngle, azimuthReal-45)){
             imgArrowTarget.setVisibility(View.INVISIBLE);
@@ -242,4 +253,6 @@ public class AugmentedViewActivity extends Activity implements SurfaceHolder.Cal
         myCurrentAzimuth.start();
         myCurrentLocation.start();
     }
+
+
 }

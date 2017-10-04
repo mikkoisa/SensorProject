@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.example.mikko.R;
 import com.example.mikko.sensorproject.AugmentedReality.CurrentLocation;
+import com.example.mikko.sensorproject.CompassActivity.Compass;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.MapsInitializer;
@@ -90,6 +91,7 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
         currentLoc = new Location("ass");
         Log.i("inio", "map on attach");
     }
+
 
 
     @Override

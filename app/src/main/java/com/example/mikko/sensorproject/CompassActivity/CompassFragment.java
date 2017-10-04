@@ -16,11 +16,13 @@ import android.widget.TextView;
 
 import com.example.mikko.R;
 import com.example.mikko.sensorproject.ChangeFragmentListener;
+import com.example.mikko.sensorproject.DestinationInterface;
 import com.example.mikko.sensorproject.DragInterface;
 import com.example.mikko.sensorproject.DragUtils;
+import com.example.mikko.sensorproject.MainActivity;
 
 
-public class CompassFragment extends Fragment {
+public class CompassFragment extends Fragment implements Compass.OnAngleChangedListener{
 
 
     private static final String TAG = "CompassActivity";
@@ -29,6 +31,8 @@ public class CompassFragment extends Fragment {
     DragInterface dragCallback;
     DragUtils dragUtils;
     ChangeFragmentListener changeFragmentListener;
+
+
     private ImageView cornerIcon;
 
     public CompassFragment() {
@@ -56,7 +60,7 @@ public class CompassFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_compass, container, false);
-        compass = new Compass(getActivity());
+        compass = new Compass(getActivity(), this) ;
         compass.arrowView = (ImageView) v.findViewById(R.id.imgPointer);
         compass.tv = (TextView)v.findViewById(R.id.txtTest);
 
@@ -117,5 +121,14 @@ public class CompassFragment extends Fragment {
 
         outState.putDouble("lat", compass.getDesLat());
         outState.putDouble("lon", compass.getDesLon());
+    }
+    public double getAzimuth(){
+        return compass.getAzimuth();
+    }
+
+    @Override
+    public void onAngleChanged(Float azimuth) {
+        Log.i("jee" , String.valueOf(azimuth));
+        ((MainActivity)getActivity()).getAzimuth(azimuth);
     }
 }

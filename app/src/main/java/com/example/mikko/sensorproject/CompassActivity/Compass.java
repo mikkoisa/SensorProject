@@ -17,6 +17,7 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.mikko.sensorproject.DestinationInterface;
 import com.example.mikko.sensorproject.MapSectionFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -31,6 +32,8 @@ public class Compass implements SensorEventListener {
     private Sensor gsensor;
     private Sensor msensor;
 
+    int i = 0;
+
     private float[] mGravity = new float[3];
     private float[] mGeomagnetic = new float[3];
 
@@ -39,8 +42,6 @@ public class Compass implements SensorEventListener {
 
     private Context con;
     TextView tv;
-
-
 
     private MapSectionFragment map;
 
@@ -54,9 +55,12 @@ public class Compass implements SensorEventListener {
     // compass arrow that points to destination
     ImageView arrowView = null;
 
+    private OnAngleChangedListener mAngleListener;
+    //SIIRÄ CAMERAFRAGMENT KUTSUMAAN LSITENERIÄ
     //Initialize sensors
-    Compass(Context context) {
+    public Compass(Context context, OnAngleChangedListener anglelistener) {
         con = context;
+        this.mAngleListener = anglelistener;
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         gsensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         msensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
@@ -69,16 +73,14 @@ public class Compass implements SensorEventListener {
         return deslon;
     }
 
-    void start() {
-
-
+    public void start() {
         GetLoc myTask = new GetLoc();
         myTask.execute();
-        sensorManager.registerListener(this, gsensor, SensorManager.SENSOR_DELAY_GAME);
-        sensorManager.registerListener(this, msensor, SensorManager.SENSOR_DELAY_GAME);
+        sensorManager.registerListener(this, gsensor, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, msensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-    void stop() {
+    public void stop() {
         sensorManager.unregisterListener(this);
     }
 
@@ -87,7 +89,12 @@ public class Compass implements SensorEventListener {
         deslon = lat;
     }
 
+    public double getAzimuth() {
+        return azimuth;
+    }
+
     //This gets called constantly when the sensors change
+    //TODO: change update interval
     @Override
     public void onSensorChanged(SensorEvent event) {
         final float alpha = 0.97f;
@@ -124,19 +131,31 @@ public class Compass implements SensorEventListener {
                 //TODO: fix the calculation ( if -destdeg gives negative value
                 azimuth = (float) Math.toDegrees(orientation[0]); // orientation
                 azimuth = (float) ((azimuth + 360) % 360 - destDeg);
+
+
+                if (i>20){
+                    Log.i("Direction: " , String.valueOf(azimuth ) + " " + String.valueOf(destDeg));
+                    mAngleListener.onAngleChanged(azimuth);
+                    i = 0;
+                }
+
                 adjustArrow();
+                i++;
+
             }
         }
     }
 
+    public interface OnAngleChangedListener {
+        void onAngleChanged(Float azimuth);
+    }
 
     //Rotate the arrow
     private void adjustArrow() {
         if (arrowView == null) {
-            Log.i("Info: ", "arrow view is not set");
+           // Log.i("Info: ", "arrow view is not set");
             return;
         }
-
         Log.i("Info: ", "will set rotation from " + correctAzimuth + " to "
                 + azimuth);
 
@@ -220,8 +239,8 @@ public class Compass implements SensorEventListener {
         //These are the settings used for the request
         void createLocationRequest() {
             mLocationRequest = new LocationRequest();
-            mLocationRequest.setInterval(1000);
-            mLocationRequest.setFastestInterval(1000);
+            mLocationRequest.setInterval(10000);
+            mLocationRequest.setFastestInterval(10000);
             mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         }
 
@@ -261,7 +280,7 @@ public class Compass implements SensorEventListener {
             Log.i("New location: " , String.valueOf(progress[0]));
             loclat = progress[0];
             loclon = progress[1];
-            tv.setText(String.valueOf(loclat) + "\n" + String.valueOf(loclon) + "\n" + String.valueOf(speed) + "\n" + String.valueOf(deslat)+ "\n" + String.valueOf(deslon)  );
+            //tv.setText(String.valueOf(loclat) + "\n" + String.valueOf(loclon) + "\n" + String.valueOf(speed) + "\n" + String.valueOf(deslat)+ "\n" + String.valueOf(deslon));
         }
 
     }

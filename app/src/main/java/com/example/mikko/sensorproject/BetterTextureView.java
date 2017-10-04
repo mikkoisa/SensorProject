@@ -3,6 +3,7 @@ package com.example.mikko.sensorproject;
 import android.content.Context;
 
 
+import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.TextureView;
 
