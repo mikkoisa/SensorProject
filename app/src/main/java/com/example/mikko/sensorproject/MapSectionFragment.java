@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.mikko.R;
 import com.example.mikko.sensorproject.AugmentedReality.CurrentLocation;
+import com.example.mikko.sensorproject.CompassActivity.Compass;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.MapsInitializer;
@@ -51,13 +53,15 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
-public class MapSectionFragment extends Fragment implements OnMapReadyCallback, LocationListener, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
+public class MapSectionFragment extends Fragment implements OnMapReadyCallback, LocationListener, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, Compass.OnAngleChangedListener {
 
     private GoogleMap googleMap;
     private MapView mapview;
     private CurrentLocation currentLocation;
     private double desLat = 1.1;
     private double desLon = 2.2;
+
+    private Compass compass;
 
     private DestinationInterface dest;
 
@@ -82,6 +86,8 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
+
+      //  compass = new Compass(getActivity(), this) ;
 
         // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
         MapsInitializer.initialize(this.getActivity());
@@ -114,6 +120,27 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
     public void onResume() {
         super.onResume();
         mapview.onResume();
+       // compass.start();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d("map: " , "start compass");
+       // compass.start();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+       // Log.d("map" , "stop compass");
+        //compass.stop();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+       // compass.stop();
     }
 
     @Override
@@ -253,11 +280,8 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
 
     }
 
-    public double getDestLat() {
-        return desLat;
-    }
-
-    public double getDesLon() {
-        return desLon;
+    @Override
+    public void onAngleChanged(Float azimuth) {
+        ((MainActivity)getActivity()).getAzimuth(azimuth);
     }
 }

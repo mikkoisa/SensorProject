@@ -24,6 +24,7 @@ import android.widget.FrameLayout;
 import android.widget.SearchView;
 
 import com.example.mikko.R;
+import com.example.mikko.sensorproject.CompassActivity.Compass;
 import com.example.mikko.sensorproject.CompassActivity.CompassFragment;
 
 /**
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
             editor.commit();
 
             searchbar = (SearchView) findViewById(R.id.searchbar);
-           camerafrag = new CameraFragment();
+            camerafrag = new CameraFragment();
             mapfrag = new MapSectionFragment();
             compassfrag = new CompassFragment();
 
@@ -318,4 +319,11 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
             compassfrag.setDest(latitude, longitude);
         }
     }
+
+    public void getAzimuth(double azimuth) {
+        if (azimuth > - 10 && azimuth < 10) {
+           Log.i("Toimmiiii!!: " , String.valueOf(azimuth));
+        }
+    }
+
 }

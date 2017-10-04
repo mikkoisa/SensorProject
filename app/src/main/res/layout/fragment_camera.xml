@@ -1,19 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <com.example.mikko.sensorproject.BetterTextureView
         android:id="@+id/texture"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"/>
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
 
 
+    <com.example.mikko.sensorproject.AugmentedView
+        android:id="@+id/surface"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/transparent"
+        android:orientation="vertical">
 
-
-
+    </com.example.mikko.sensorproject.AugmentedView>
 
     <FrameLayout
 
@@ -25,7 +35,7 @@
 
         android:layout_marginTop="15dp"
         android:layout_marginEnd="15dp"
-        >
+        android:id="@+id/frameLayout">
 
         <include layout="@layout/cornericon"/>
 </FrameLayout>
@@ -42,4 +52,5 @@
 
             />
     </FrameLayout>
+
 </RelativeLayout>

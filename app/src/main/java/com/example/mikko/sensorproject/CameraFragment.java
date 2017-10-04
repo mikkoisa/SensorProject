@@ -2,6 +2,11 @@ package com.example.mikko.sensorproject;
 
 import android.annotation.TargetApi;
 import android.content.res.Configuration;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.content.Context;
@@ -22,6 +27,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.MotionEventCompat;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
@@ -29,13 +35,18 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.Surface;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.example.mikko.R;
+import com.example.mikko.sensorproject.CompassActivity.Compass;
 
 import java.util.Arrays;
 import java.util.List;
@@ -43,7 +54,7 @@ import java.util.List;
 /**
  * Created by buckfast on 21.9.2017.
  */
-public class CameraFragment extends Fragment {
+public class CameraFragment extends Fragment implements Compass.OnAngleChangedListener {
 
 
     private BetterTextureView texture;
@@ -58,26 +69,35 @@ public class CameraFragment extends Fragment {
 
     private String cameraId;
 
+    private Compass compass;
+
     private Size imageDimension;
     protected CameraDevice cameraDevice;
     protected CameraCaptureSession cameraCaptureSessions;
     protected CaptureRequest.Builder captureRequestBuilder;
 
+    int devicewidth;
+    int deviceheight;
 
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
     //private int activePointer = MotionEvent.INVALID_POINTER_ID;
     //private float lastY = 0f;
     //private float lastX = 0f;
+    Canvas canvas;
 
-
+    SurfaceView drawSurface;
+    private SurfaceHolder sfhTrackHolder;
     //List<Integer> bestPreview;
 
     DragInterface dragCallback;
     ChangeFragmentListener changeFragmentListener;
     DragUtils dragUtils;
+    private DestinationInterface destinationInterface;
+    boolean built = false;
 
     private ImageView cornerIcon;
+
 
     public CameraFragment() {
 
@@ -98,6 +118,15 @@ public class CameraFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_camera, container, false);
 
+        compass = new Compass(getActivity(), this) ;
+
+        drawSurface = (SurfaceView) v.findViewById(R.id.surface);
+        drawSurface.setZOrderOnTop(true);    // necessary?
+        sfhTrackHolder = drawSurface.getHolder();
+        sfhTrackHolder.setFormat(PixelFormat.TRANSPARENT);
+
+     //   surface.setAlpha(0.5f);
+      //  surface.addView(new AugmentedView(this));
 
         Display display = ((WindowManager)getActivity().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         dragUtils.setupViewDrag(v, display.getRotation(), dragCallback);
@@ -120,6 +149,7 @@ public class CameraFragment extends Fragment {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             openCamera();
+            getScreenResolution(getContext());
         }
 
         @Override
@@ -168,6 +198,7 @@ public class CameraFragment extends Fragment {
             e.printStackTrace();
         }
     }
+
 /*
     private void showPhoneStatePermission() {
         int permissionCheck = ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.CAMERA);
@@ -217,11 +248,18 @@ public class CameraFragment extends Fragment {
         }
     };
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d("map: " , "start compass");
+        compass.start();
+    }
 
     @Override
     public void onResume() {
         super.onResume();
         startBackgroundThread();
+        compass.start();
 
         // When the screen is turned off and turned back on, the SurfaceTexture is already
         // available, and "onSurfaceTextureAvailable" will not be called. In that case, we can open
@@ -236,6 +274,7 @@ public class CameraFragment extends Fragment {
     @Override
     public void onPause() {
         cameraDevice.close();
+        compass.stop();
         cameraDevice = null;
         stopBackgroundThread();
         super.onPause();
@@ -320,7 +359,36 @@ public class CameraFragment extends Fragment {
         texture = (BetterTextureView) view.findViewById(R.id.texture);
         assert texture != null;
         texture.setSurfaceTextureListener(textureListener);
+        built = true;
+
     }
 
+    public void drawing (float azimuth) {
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(Color.WHITE);
+        canvas = sfhTrackHolder.lockCanvas();
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+        canvas.drawCircle(devicewidth/2 - azimuth*20, deviceheight/2 ,100 , paint );
+        Log.i("Drew circle", String.valueOf(azimuth));
 
+        sfhTrackHolder.unlockCanvasAndPost(canvas);
+    }
+
+    @Override
+    public void onAngleChanged(Float azimuth) {
+        if (built) {
+            Log.i("piirtaaaaaa", String.valueOf(azimuth));
+            drawing(azimuth);
+        }
+    }
+
+    private void getScreenResolution(Context context) {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        DisplayMetrics metrics = new DisplayMetrics();
+        display.getMetrics(metrics);
+        devicewidth = metrics.widthPixels;
+        deviceheight = metrics.heightPixels;
+    }
 }
