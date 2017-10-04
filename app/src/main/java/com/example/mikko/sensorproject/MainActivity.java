@@ -11,6 +11,9 @@ import android.graphics.Point;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
@@ -58,6 +61,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.prefs.PreferenceChangeEvent;
 
 /**
@@ -87,7 +95,9 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
 
     private Timer timer;
 
-    private GetPredictions getPredictions;
+    BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<Runnable>(80);
+    Executor threadPoolExecutor = new ThreadPoolExecutor(60, 80, 10, TimeUnit.SECONDS, workQueue);
+
 
     private BroadcastReceiver broadcastReceiver;
 
@@ -371,8 +381,17 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
                                 try {
                                     String encodedQuery = URLEncoder.encode(newText, "UTF-8");
                                     URL places = new URL("https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" + encodedQuery + "&location=" + myLocation.getLatitude() + "," + myLocation.getLongitude() + "&radius=2000&key=AIzaSyBaUTD9YbQSNZlaBFRHW2t5GsBeI6CPv-A");
-                                    getPredictions = new GetPredictions();
-                                    getPredictions.execute(places);
+                                  //  Log.i("urli on: " , suggestionListItems.get(0));
+                                   // getPredictions.executeOnExecutor(threadPoolExecutor, places);
+
+                                    //THread here
+                                    PredThread sc = new PredThread(uiHandler, places);
+                                    Thread t = new Thread(sc);
+                                    t.start();
+
+
+
+
                                 } catch (Exception e) {
                                     Log.e("error","url", e);
                                 }
@@ -396,6 +415,22 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
         return true;
     }
 
+    private Handler uiHandler = new Handler(Looper.getMainLooper()) {
+        public void handleMessage(Message msg) {
+            if (msg.what == 0){
+
+                Gson gson = new Gson();
+                predictions = gson.fromJson(msg.obj.toString() , Predictions.class);
+                suggestionListItems.clear();
+                for (int i = 0; i < predictions.getPredictions().size(); i++) {
+                    suggestionListItems.add(predictions.getPredictions().get(i).getDescription());
+                }
+                adapter.notifyDataSetChanged();
+            }
+        }
+    };
+
+
     private void submitQuery(String query) {
         if (timer != null) {
             timer.cancel();
@@ -417,9 +452,17 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
     }
 
 
-    private class GetPredictions extends AsyncTask<URL, Void, String> {
+    AsyncTask<URL, Void, String> getPredictions = new AsyncTask<URL, Void, String>() {
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.i("preex " , "vihdoin toimii");
+        }
+
+        @Override
         protected String doInBackground(URL... url) {
+            Log.i("workiiko" , String.valueOf(url));
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
             URL urli = url[0];
@@ -427,6 +470,7 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
             String json;
 
             try {
+
                 urlConnection = (HttpURLConnection) urli.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
@@ -453,6 +497,7 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
 
             } catch (IOException e) {
                 Log.e("predictions", "error ", e);
+                Log.i("workiiko" , "ew");
                 return null;
 
             } finally {
@@ -468,7 +513,7 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
                 }
             }
         }
-
+        @Override
         protected void onPostExecute(String result) {
             Gson gson = new Gson();
             predictions = gson.fromJson(result, Predictions.class);
@@ -478,7 +523,7 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
             }
             adapter.notifyDataSetChanged();
         }
-    }
+    };
 
 
     @Override

@@ -280,7 +280,7 @@ public class Compass implements SensorEventListener {
             Log.i("New location: " , String.valueOf(progress[0]));
             loclat = progress[0];
             loclon = progress[1];
-            //tv.setText(String.valueOf(loclat) + "\n" + String.valueOf(loclon) + "\n" + String.valueOf(speed) + "\n" + String.valueOf(deslat)+ "\n" + String.valueOf(deslon));
+            //tv.setText(String.valueOf(loclat) + "\n" + String.valueOf(loclon) + "\n" + String.valueOf(speed) + "\n" + String.valueOf(deslat)+ "\n" + String.valueOf(deslon)  );
         }
 
     }
