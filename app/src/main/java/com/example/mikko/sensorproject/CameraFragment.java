@@ -369,8 +369,24 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
         paint.setColor(Color.WHITE);
         canvas = sfhTrackHolder.lockCanvas();
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-        canvas.drawCircle(devicewidth/2 - azimuth*20, deviceheight/2 ,100 , paint );
-        Log.i("Drew circle", String.valueOf(azimuth));
+
+        float devicePercent = (float) (devicewidth/100.0);
+        float azimuthPercent = azimuth/45;
+
+
+        if (azimuth < 22.5 && azimuth > -22.5) {
+            canvas.drawCircle(devicewidth/2 - devicePercent * (azimuthPercent*100), deviceheight/2 ,100 , paint );
+            Log.i("Drew circle", String.valueOf(azimuth));
+        }
+        else if (azimuth > 22.5 && azimuth < 180) {
+            canvas.drawLine(0,deviceheight/2, 200, deviceheight/2, paint );
+        }
+        else if (azimuth < -22.5 && azimuth > -180) {
+            canvas.drawLine(devicewidth, deviceheight/2, devicewidth-200, deviceheight/2, paint);
+        }
+
+
+
 
         sfhTrackHolder.unlockCanvasAndPost(canvas);
     }

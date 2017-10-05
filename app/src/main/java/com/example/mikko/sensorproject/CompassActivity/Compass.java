@@ -239,8 +239,8 @@ public class Compass implements SensorEventListener {
         //These are the settings used for the request
         void createLocationRequest() {
             mLocationRequest = new LocationRequest();
-            mLocationRequest.setInterval(10000);
-            mLocationRequest.setFastestInterval(10000);
+            mLocationRequest.setInterval(1000);
+            mLocationRequest.setFastestInterval(1000);
             mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         }
 
