@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 
 import com.example.mikko.R;
-import com.example.mikko.sensorproject.DestinationInterface;
+import com.example.mikko.sensorproject.interfaces.DestinationInterface;
 
 import java.io.IOException;
 import java.util.ArrayList;
