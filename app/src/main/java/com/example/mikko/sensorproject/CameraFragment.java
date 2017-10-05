@@ -309,7 +309,12 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
 
     }*/
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        int screenRotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
 
+    }
 
     private void createCameraPreview() {
         try {

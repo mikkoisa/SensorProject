@@ -1,63 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-        android:title="Sync Information"
-        android:key="sync_category">
+        android:title="Home screen views"
+        android:key="ekakategoria">
 
         <CheckBoxPreference
-            android:key="perform_sync"
-            android:summary="Enable or disable data sync"
-            android:title="Enable Auto Sync"
+            android:key="remembersizes"
+            android:summary="Remember split-screen view sizes"
+            android:title="Remember view sizes"
             android:defaultValue="true"/>
 
         <ListPreference
-            android:key="sync_interval"
-            android:title="Sync interval"
-            android:summary="Define how often sync will be performed"
-            android:defaultValue="1000"
+            android:key="defaultview"
+            android:title="Default view"
+            android:summary="Define whether to display a compass or AR view on the home screen"
 
-            android:dependency="perform_sync"/>
+            />
 
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="Personal Informations"
-        android:key="personal_category">
+        android:title="Map"
+        android:key="tokakategoria">
 
+        <CheckBoxPreference
+            android:key="autocomplete"
+            android:summary="Enable or disable autocomplete"
+            android:title="Enable autocomplete"
+            android:defaultValue="true"/>
 
-        <EditTextPreference
-            android:key="full_name"
-            android:title="Name"
-            android:summary="Enter Your Complete Name"
-            android:dialogTitle="Your Name"
-            android:dialogMessage="Enter Your Complete Name"
-            android:inputType="textCapWords"/>
+        <ListPreference
+            android:key="language"
+             android:summary="Select preferred language for autocomplete"
+            android:title="Autocomplete language"
 
-        <EditTextPreference
-            android:key="email_address"
-            android:title="Email Address"
-            android:summary="Enter Your Email Address"
-            android:dialogTitle="Enter Your Email Address"
-            android:dialogMessage="Enter Your Email Address"
-            android:inputType="textEmailAddress"/>
+            ></ListPreference>
 
-    </PreferenceCategory>
-
-
-    <PreferenceCategory
-        android:title="Customisations"
-        android:key="custom_category">
-
-
-        <RingtonePreference
-            android:key="notification_ringtone"
-            android:title="Miikka's game corner"
-            android:summary="Customise Notification Ringtone for you"
-            android:dialogTitle="Notification Ringtone"
-            android:dialogMessage="Customise Notification Ringtone for you"/>
-
-
+        <CheckBoxPreference
+            android:key="followlocation"
+            android:summary="Enable or disable location auto follow"
+            android:title="Follow your location"
+            android:defaultValue="false"/>
 
     </PreferenceCategory>
+
+
 
 </PreferenceScreen>

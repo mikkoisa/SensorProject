@@ -30,7 +30,7 @@
         <item name="android:statusBarColor">@color/colorPrimarySuperDark</item>
         <item name="android:textSelectHandle">@color/colorAccent</item>
 
-
+        <item name="autoCompleteTextViewStyle">@color/colorPrimaryDark</item>
         <item name="android:contentInsetLeft">0dp</item>
         <item name="android:contentInsetRight">0dp</item>
         <item name="contentInsetStart">0dp</item>

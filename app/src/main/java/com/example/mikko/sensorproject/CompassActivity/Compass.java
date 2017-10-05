@@ -74,8 +74,8 @@ public class Compass implements SensorEventListener {
     }
 
     public void start() {
-        GetLoc myTask = new GetLoc();
-        myTask.execute();
+        //GetLoc myTask = new GetLoc();
+        //myTask.execute();
         sensorManager.registerListener(this, gsensor, SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, msensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
@@ -87,6 +87,12 @@ public class Compass implements SensorEventListener {
     public void setCoord(Double lat, Double lon){
         deslat = lon;
         deslon = lat;
+    }
+    public void setMyLocation(Double lat, Double lon) {
+        loclat = lat;
+        loclon = lon;
+        tv.setText(String.valueOf(loclat) + "\n" + String.valueOf(loclon) + "\n" + String.valueOf(deslat)+ "\n" + String.valueOf(deslon)  );
+
     }
 
     public double getAzimuth() {
@@ -205,6 +211,7 @@ public class Compass implements SensorEventListener {
 
 
     //Async Task inner class for location tracking
+    /*
     private class GetLoc extends AsyncTask<Void, Double, Void>  {
         private FusedLocationProviderClient mFusedLocationClient;
         private LocationRequest mLocationRequest;
@@ -283,5 +290,5 @@ public class Compass implements SensorEventListener {
             //tv.setText(String.valueOf(loclat) + "\n" + String.valueOf(loclon) + "\n" + String.valueOf(speed) + "\n" + String.valueOf(deslat)+ "\n" + String.valueOf(deslon)  );
         }
 
-    }
+    }*/
 }

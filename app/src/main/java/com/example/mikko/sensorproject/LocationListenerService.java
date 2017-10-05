@@ -96,17 +96,17 @@ public class LocationListenerService extends Service {
 
         try {
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, interval, distance,  locationListeners[1]);
-        } catch (java.lang.SecurityException ex) {
-            Log.i("inio", "location update failed", ex);
-        } catch (IllegalArgumentException ex) {
-            Log.i("inio", "no network provider" + ex.getMessage());
+        } catch (java.lang.SecurityException e) {
+            Log.i("inio", "location update failed", e);
+        } catch (IllegalArgumentException e) {
+            Log.i("inio", "no network provider" + e.getMessage());
         }
         try {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, interval, distance,  locationListeners[0]);
-        } catch (java.lang.SecurityException ex) {
-            Log.i("inio", "location update failed", ex);
-        } catch (IllegalArgumentException ex) {
-            Log.i("inio", "no gps provider" + ex.getMessage());
+        } catch (java.lang.SecurityException e) {
+            Log.i("inio", "location update failed", e);
+        } catch (IllegalArgumentException e) {
+            Log.i("inio", "no gps provider" + e.getMessage());
         }
     }
 
@@ -117,7 +117,7 @@ public class LocationListenerService extends Service {
             for (int i=0; i<locationListeners.length; i++) {
                 try {
                     locationManager.removeUpdates(locationListeners[i]);
-                } catch (Exception ex) {
+                } catch (Exception e) {
 
                 }
             }

@@ -103,6 +103,8 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
 
     private Location myLocation;
 
+    private String autocompleteJson;
+
     // private TextView latlon;
 
     @Override
@@ -116,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         screenSize = new Point();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -147,6 +150,10 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
                     mapFragment.locationChanged((Double.parseDouble(intent.getExtras().get("lat").toString())), Double.parseDouble(intent.getExtras().get("lon").toString()));
                 }
 
+                if (currentFragment == "compass") {
+                    CompassFragment compassFragment = (CompassFragment) getSupportFragmentManager().findFragmentByTag("compass");
+                    compassFragment.locationChanged((Double.parseDouble(intent.getExtras().get("lat").toString())), Double.parseDouble(intent.getExtras().get("lon").toString()));
+                }
 
             }
         };
@@ -212,6 +219,8 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
             if (savedInstanceState.getBoolean("SUGGESTIONS_VISIBLE")) {
                 suggestionList.setVisibility(View.VISIBLE);
             }
+
+            autocompleteJson = savedInstanceState.getString("AUTOCOMPLETE_JSON");
 
             //Log.i("inio", "tääällä taas");
             searchbar = (SearchView) findViewById(R.id.searchbar);
@@ -290,6 +299,7 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
 
         outState.putString("FRAGMENT_STATE", currentFragment);
         outState.putInt("DRAG_STATE", currentDragState);
+        outState.putString("AUTOCOMPLETE_JSON", autocompleteJson);
     }
 
     @Override
@@ -307,7 +317,27 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
         suggestionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                submitQuery(suggestionListItems.get(position));
+
+                searchbar.setQuery(removeCountry(suggestionListItems.get(position)),false);
+
+                if (predictions == null) {
+                    Gson gson = new Gson();
+                    predictions = gson.fromJson(autocompleteJson , Predictions.class);
+                }
+                StringBuilder sb = new StringBuilder();
+                for (int i=0; i<predictions.getPredictions().get(position).getTerms().size()-1; i++) {
+                    sb.append(predictions.getPredictions().get(position).getTerms().get(i).getValue());
+                    if (i<predictions.getPredictions().get(position).getTerms().size()-1) {
+                        sb.append(" ");
+                    }
+                }
+
+                Log.i("inio", sb.toString());
+
+                submitQuery(sb.toString());
+
+
+
                 suggestionList.setVisibility(View.GONE);
             }
         });
@@ -407,7 +437,6 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
             public boolean onQueryTextSubmit(String query) {
                 submitQuery(query);
 
-
                 return true;
             }
         });
@@ -421,6 +450,7 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
 
                 Gson gson = new Gson();
                 predictions = gson.fromJson(msg.obj.toString() , Predictions.class);
+                autocompleteJson = msg.obj.toString();
                 suggestionListItems.clear();
                 for (int i = 0; i < predictions.getPredictions().size(); i++) {
                     suggestionListItems.add(predictions.getPredictions().get(i).getDescription());
@@ -430,6 +460,16 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
         }
     };
 
+    private String removeCountry(String string) {
+        if (string.length() > 0) {
+            int lastComma = string.lastIndexOf(",");
+            if (lastComma != -1) {
+                return string.substring(0, lastComma);
+
+            }
+        }
+        return null;
+    }
 
     private void submitQuery(String query) {
         if (timer != null) {
@@ -438,10 +478,15 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
         suggestionList.setVisibility(View.GONE);
 
         hideKeyboard();
-
+        Log.i("inio",query);
         MapSectionFragment mapFragment = (MapSectionFragment) getSupportFragmentManager().findFragmentByTag("map");
         if (mapFragment != null) {
+
             mapFragment.searchForLocation(query);
+
+
+
+
             this.getCurrentFocus().clearFocus();
         }
     }

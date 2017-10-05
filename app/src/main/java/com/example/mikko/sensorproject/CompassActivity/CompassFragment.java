@@ -20,6 +20,8 @@ import com.example.mikko.sensorproject.DestinationInterface;
 import com.example.mikko.sensorproject.DragInterface;
 import com.example.mikko.sensorproject.DragUtils;
 import com.example.mikko.sensorproject.MainActivity;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.LatLng;
 
 
 public class CompassFragment extends Fragment implements Compass.OnAngleChangedListener{
@@ -113,6 +115,10 @@ public class CompassFragment extends Fragment implements Compass.OnAngleChangedL
 
     public void setDest(Double lat, Double lon){
         compass.setCoord(lat, lon);
+    }
+    public void locationChanged(Double newLat, Double newLon) {
+        compass.setMyLocation(newLat, newLon);
+
     }
 
     @Override

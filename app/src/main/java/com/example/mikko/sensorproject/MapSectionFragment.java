@@ -392,5 +392,7 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
             this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
             startCentered = true;
         }
+
+
     }
 }
