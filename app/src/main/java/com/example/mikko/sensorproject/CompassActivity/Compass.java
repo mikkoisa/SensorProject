@@ -139,7 +139,7 @@ public class Compass implements SensorEventListener {
                 azimuth = (float) ((azimuth + 360) % 360 - destDeg);
 
 
-                if (i>20){
+                if (i>5){
                     Log.i("Direction: " , String.valueOf(azimuth ) + " " + String.valueOf(destDeg));
                     mAngleListener.onAngleChanged(azimuth);
                     i = 0;
