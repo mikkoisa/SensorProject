@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.Point;
 import android.location.Location;
 import android.os.AsyncTask;
@@ -14,22 +13,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -38,15 +31,14 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.SearchView;
-import android.widget.TextView;
 
 import com.example.mikko.R;
-import com.example.mikko.sensorproject.CompassActivity.Compass;
 import com.example.mikko.sensorproject.CompassActivity.CompassFragment;
 import com.example.mikko.sensorproject.autocomplete.Predictions;
-import com.google.android.gms.vision.text.Text;
+import com.example.mikko.sensorproject.interfaces.ChangeFragmentListener;
+import com.example.mikko.sensorproject.interfaces.DestinationInterface;
+import com.example.mikko.sensorproject.interfaces.DragInterface;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
@@ -54,7 +46,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -66,7 +57,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.prefs.PreferenceChangeEvent;
 
 /**
  * Created by buckfast on 21.9.2017.

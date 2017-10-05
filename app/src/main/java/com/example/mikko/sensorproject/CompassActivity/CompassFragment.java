@@ -15,9 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.mikko.R;
-import com.example.mikko.sensorproject.ChangeFragmentListener;
-import com.example.mikko.sensorproject.DestinationInterface;
-import com.example.mikko.sensorproject.DragInterface;
+import com.example.mikko.sensorproject.interfaces.ChangeFragmentListener;
+import com.example.mikko.sensorproject.interfaces.DragInterface;
 import com.example.mikko.sensorproject.DragUtils;
 import com.example.mikko.sensorproject.MainActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;

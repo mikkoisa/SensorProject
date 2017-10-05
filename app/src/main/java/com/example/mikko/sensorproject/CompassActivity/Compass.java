@@ -17,7 +17,6 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.mikko.sensorproject.DestinationInterface;
 import com.example.mikko.sensorproject.MapSectionFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;

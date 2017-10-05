@@ -1,4 +1,4 @@
-package com.example.mikko.sensorproject;
+package com.example.mikko.sensorproject.interfaces;
 
 /**
  * Created by buckfast on 27.9.2017.
