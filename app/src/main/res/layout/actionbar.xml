@@ -49,7 +49,6 @@
                 android:visibility="gone"
                 android:layout_alignParentLeft="true"
 
-
                 />
 
             <SearchView
@@ -60,7 +59,7 @@
                 android:background="@color/colorPrimaryDark"
                 android:gravity="left"
                 android:iconifiedByDefault="false"
-                android:inputType="textCapSentences"
+                android:inputType="textCapSentences|textNoSuggestions"
                 android:paddingLeft="-22dp"
 
 

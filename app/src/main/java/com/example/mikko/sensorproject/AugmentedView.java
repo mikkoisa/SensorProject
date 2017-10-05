@@ -15,9 +15,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 
-/**
- * Created by Mikko on 1.10.2017.
- */
 
 public class AugmentedView extends SurfaceView implements SurfaceHolder.Callback {
 

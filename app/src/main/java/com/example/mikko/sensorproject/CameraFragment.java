@@ -1,6 +1,7 @@
 package com.example.mikko.sensorproject;
 
 import android.annotation.TargetApi;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -25,12 +26,14 @@ import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -39,6 +42,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.example.mikko.R;
 import com.example.mikko.sensorproject.CompassActivity.Compass;
@@ -47,10 +52,8 @@ import com.example.mikko.sensorproject.interfaces.DestinationInterface;
 import com.example.mikko.sensorproject.interfaces.DragInterface;
 
 import java.util.Arrays;
+import java.util.List;
 
-/**
- * Created by buckfast on 21.9.2017.
- */
 public class CameraFragment extends Fragment implements Compass.OnAngleChangedListener {
 
 
@@ -117,10 +120,15 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
 
         compass = new Compass(getActivity(), this) ;
 
+
         drawSurface = (SurfaceView) v.findViewById(R.id.surface);
         drawSurface.setZOrderOnTop(true);    // necessary?
         sfhTrackHolder = drawSurface.getHolder();
         sfhTrackHolder.setFormat(PixelFormat.TRANSPARENT);
+
+
+        //devicewidth = drawSurface.getMeasuredWidth();
+        //deviceheight = drawSurface.getMeasuredHeight();
 
      //   surface.setAlpha(0.5f);
       //  surface.addView(new AugmentedView(this));
@@ -146,12 +154,16 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             openCamera();
-            getScreenResolution(getContext());
+
+
+            deviceheight = height;
+            devicewidth = width;
         }
 
         @Override
         public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-
+            deviceheight = height;
+            devicewidth = width;
         }
 
         @Override
@@ -406,7 +418,7 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
         Display display = wm.getDefaultDisplay();
         DisplayMetrics metrics = new DisplayMetrics();
         display.getMetrics(metrics);
-        devicewidth = metrics.widthPixels;
-        deviceheight = metrics.heightPixels;
+        //devicewidth = metrics.widthPixels;
+        //deviceheight = metrics.heightPixels;
     }
 }
