@@ -1,6 +1,7 @@
 package com.example.mikko.sensorproject.CompassActivity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
@@ -75,6 +76,7 @@ public class Compass implements SensorEventListener {
     public void start() {
         //GetLoc myTask = new GetLoc();
         //myTask.execute();
+
         sensorManager.registerListener(this, gsensor, SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, msensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
@@ -84,8 +86,8 @@ public class Compass implements SensorEventListener {
     }
 
     public void setCoord(Double lat, Double lon){
-        deslat = lon;
-        deslon = lat;
+        deslat = lat;
+        deslon = lon;
     }
     public void setMyLocation(Double lat, Double lon) {
         loclat = lat;
@@ -139,7 +141,7 @@ public class Compass implements SensorEventListener {
 
 
                 if (i>5){
-                    Log.i("Direction: " , String.valueOf(azimuth ) + " " + String.valueOf(destDeg));
+                   // Log.i("Direction: " , String.valueOf(azimuth ) + " " + String.valueOf(destDeg));
                     mAngleListener.onAngleChanged(azimuth);
                     i = 0;
                 }
@@ -161,8 +163,7 @@ public class Compass implements SensorEventListener {
            // Log.i("Info: ", "arrow view is not set");
             return;
         }
-        Log.i("Info: ", "will set rotation from " + correctAzimuth + " to "
-                + azimuth);
+        //Log.i("Info: ", "will set rotation from " + correctAzimuth + " to "+ azimuth);
 
         //Initialize the rotation animation
         Animation an = new RotateAnimation(-correctAzimuth, -azimuth,

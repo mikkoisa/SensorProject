@@ -1,6 +1,7 @@
-<LinearLayout android:layout_height="match_parent"
+<RelativeLayout android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:orientation="vertical">
+
 
 
 
@@ -8,11 +9,44 @@
     <com.google.android.gms.maps.MapView
         android:id="@+id/mapview"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
+
+        android:layout_height="match_parent"
+        />
+
+    <FrameLayout
+
+        android:orientation="vertical"
+android:background="@color/paska"
+        android:id="@+id/info_fragment_placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+
+        >
+
+    </FrameLayout>
+
+
+
+        <ProgressBar
+
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:id="@+id/progressbar"
+            android:visibility="gone"
+            android:indeterminateDrawable="@drawable/loading"
+
+            android:background="@color/paska"
+
+
+            android:indeterminate="true"
 
 
 
 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
 
-</LinearLayout>
+
+</RelativeLayout>

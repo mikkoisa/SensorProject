@@ -1,6 +1,10 @@
 <resources xmlns:android="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
+
+
+
+
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
 
@@ -8,9 +12,21 @@
         <item name="android:contentInsetRight">0dp</item>
     </style>
 
+    <style name="paska" parent="@android:style/Theme.Material.Dialog">
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+    <style name="listViewPrefs" parent="@android:style/Widget.ListView">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:cacheColorHint">@color/colorPrimary</item>
+    </style>
     <style name="CustomTheme" parent="Theme.AppCompat.Light.DarkActionBar">
 
-        <item name="android:background">@color/colorPrimary</item>
+
+        <item name="android:alertDialogTheme">@style/paska</item>
+
+        <item name="android:toolbarStyle">@color/colorPrimary</item>
+
+
         <item name="android:foregroundTint">@color/colorPrimaryDark</item>
         <item name="android:popupBackground">@color/paska</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
@@ -34,6 +50,8 @@
         <item name="android:contentInsetLeft">0dp</item>
         <item name="android:contentInsetRight">0dp</item>
         <item name="contentInsetStart">0dp</item>
+
+        <item name="android:textColorAlertDialogListItem">@color/colorPrimaryDark</item>
 
 
 

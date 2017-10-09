@@ -1,12 +1,15 @@
 package com.example.mikko.sensorproject;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
+import android.graphics.RectF;
 import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.content.Context;
@@ -58,14 +61,7 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
 
 
     private BetterTextureView texture;
-    private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
-    static {
-        ORIENTATIONS.append(Surface.ROTATION_0, 90);
-        ORIENTATIONS.append(Surface.ROTATION_90, 0);
-        ORIENTATIONS.append(Surface.ROTATION_180, 270);
-        ORIENTATIONS.append(Surface.ROTATION_270, 180);
-    }
 
     private String cameraId;
 
@@ -81,14 +77,12 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
 
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
-    //private int activePointer = MotionEvent.INVALID_POINTER_ID;
-    //private float lastY = 0f;
-    //private float lastX = 0f;
+
     Canvas canvas;
 
     SurfaceView drawSurface;
     private SurfaceHolder sfhTrackHolder;
-    //List<Integer> bestPreview;
+
 
     DragInterface dragCallback;
     ChangeFragmentListener changeFragmentListener;
@@ -112,6 +106,13 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
         changeFragmentListener = (ChangeFragmentListener) context;
     }
 
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
     @TargetApi(Build.VERSION_CODES.M)
     @Nullable
     @Override
@@ -119,7 +120,13 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
         View v = inflater.inflate(R.layout.fragment_camera, container, false);
 
         compass = new Compass(getActivity(), this) ;
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            double lat = bundle.getDouble("latitude", 60);
+            double lon = bundle.getDouble("longitude", 24);
 
+            setDest(lat,lon);
+        }
 
         drawSurface = (SurfaceView) v.findViewById(R.id.surface);
         drawSurface.setZOrderOnTop(true);    // necessary?
@@ -147,6 +154,9 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
     }
 
 
+    public void setDest(Double lat, Double lon){
+        compass.setCoord(lat, lon);
+    }
 
 
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
@@ -162,8 +172,10 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
 
         @Override
         public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-            deviceheight = height;
-            devicewidth = width;
+                deviceheight = height;
+                devicewidth = width;
+
+                configureTransform(width, height);
         }
 
         @Override
@@ -186,8 +198,10 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
             StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             assert map != null;
             imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
-            // Add permission for camera and let user grant the permission
 
+Log.i("inio", String.valueOf(imageDimension));
+
+            configureTransform(texture.getWidth(), texture.getHeight());
 
             if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
@@ -296,6 +310,7 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
     }
     private void stopBackgroundThread() {
         mBackgroundThread.quitSafely();
+
         try {
             mBackgroundThread.join();
             mBackgroundThread = null;
@@ -318,12 +333,7 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
 
     }*/
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        int screenRotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
 
-    }
 
     private void createCameraPreview() {
         try {
@@ -353,15 +363,17 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
         }
     }
     protected void updatePreview() {
-        if(null == cameraDevice) {
-            System.out.println("asdad");
-        }
-        captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-        try {
-            cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, mBackgroundHandler);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
+
+            if (null == cameraDevice) {
+                System.out.println("asdad");
+            }
+            captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+            try {
+                cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, mBackgroundHandler);
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
+
     }
 
 
@@ -413,12 +425,43 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
         }
     }
 
-    private void getScreenResolution(Context context) {
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        DisplayMetrics metrics = new DisplayMetrics();
-        display.getMetrics(metrics);
-        //devicewidth = metrics.widthPixels;
-        //deviceheight = metrics.heightPixels;
+
+    private void configureTransform(int viewWidth, int viewHeight) {
+        Activity activity = getActivity();
+        if (null == texture || null == imageDimension || null == activity) {
+            return;
+        }
+        int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+        Matrix matrix = new Matrix();
+        RectF viewRect = new RectF(0, 0, viewWidth, viewHeight);
+        RectF bufferRect = new RectF(0, 0, imageDimension.getHeight(), imageDimension.getWidth());
+        float centerX = viewRect.centerX();
+        float centerY = viewRect.centerY();
+        float scale = Math.max((float) viewHeight / imageDimension.getHeight(), (float) viewWidth / imageDimension.getWidth());
+        if (Surface.ROTATION_90 == rotation || Surface.ROTATION_270 == rotation) {
+            bufferRect.offset(centerX - bufferRect.centerX(), centerY - bufferRect.centerY());
+            matrix.setRectToRect(viewRect, bufferRect, Matrix.ScaleToFit.FILL);
+
+            matrix.postScale(scale, scale, centerX, centerY);
+            matrix.postRotate(90 * (rotation - 2), centerX, centerY);
+        } else if (Surface.ROTATION_180 == rotation) {
+            matrix.postRotate(180, centerX, centerY);
+        } else if (Surface.ROTATION_0 == rotation) {
+            bufferRect.offset(centerX - bufferRect.centerX(), centerY - bufferRect.centerY());
+            matrix.setRectToRect(viewRect, bufferRect, Matrix.ScaleToFit.FILL);
+
+            scale = Math.min((float) viewHeight / imageDimension.getHeight(), (float) viewWidth / imageDimension.getWidth());
+            if (scale <= 1.5) {
+                scale =1.5f;
+            }
+
+            Log.i("scale", String.valueOf(scale));
+            matrix.postScale(scale*1.5f, scale*1.5f, centerX, centerY);
+
+        }
+
+            texture.setTransform(matrix);
+
     }
+
 }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 
 import android.preference.PreferenceFragment;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
@@ -44,12 +45,21 @@ public class PreferencesFragment extends PreferenceFragment {
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        view.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+
+        return view;
+    }
+
+    @Override
     public void onPrepareOptionsMenu(Menu menu) {
        // menu.findItem(R.id.searchbar).setVisible(false);
 
         actionbar.getCustomView().findViewById(R.id.searchbar).setVisibility(View.GONE);
         actionbar.getCustomView().findViewById(R.id.titlebar).setVisibility(View.VISIBLE);
         menu.findItem(R.id.action_manage).setVisible(false);
+        menu.findItem(R.id.action_info).setVisible(false);
 
         super.onPrepareOptionsMenu(menu);
     }

@@ -2,7 +2,10 @@
 <resources>
     <color name="colorPrimaryDark">#dadada</color>
     <color name="colorPrimaryDarkSecondary">#898989</color>
-    <color name="colorPrimary">#262625</color>
+    <color name="colorPrimary">#212121</color>
+    <color name="colorBox">#a5262625</color>
+
+    <color name="colorPrimary2">#161616</color>
     <color name="colorPrimarySuperDark">#000000</color>
     <color name="colorAccent">#7dadb3</color>
     <color name="paska">#00ffffff</color>

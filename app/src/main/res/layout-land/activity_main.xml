@@ -10,6 +10,8 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:clickable="true"
+    android:background="@color/colorPrimarySuperDark"
+
     android:focusableInTouchMode="true" >
 
     <FrameLayout
@@ -30,12 +32,16 @@
 </LinearLayout>
 
     <FrameLayout
+        android:background="@color/colorPrimary2"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <ListView
-
+            android:background="@color/colorPrimary"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginBottom="1dp"
             android:id="@+id/suggestions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
