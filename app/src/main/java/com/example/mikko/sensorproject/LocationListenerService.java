@@ -7,20 +7,11 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.google.android.gms.location.LocationListener;
 
-
-/**
- * Created by buckfast on 28.9.2017.
- */
 
 public class LocationListenerService extends Service {
-    private static int interval = 1000;
-    private static float distance = 0f;
 
     private LocationManager locationManager = null;
 
@@ -33,7 +24,7 @@ public class LocationListenerService extends Service {
     private class LocationListener implements android.location.LocationListener {
         Location lastLocation;
 
-        public LocationListener(String provider) {
+        LocationListener(String provider) {
             Log.i("inio", "LocationListener " + provider);
             lastLocation = new Location(provider);
             //System.out.println("LASTI "+lastLocation);
@@ -95,6 +86,8 @@ public class LocationListenerService extends Service {
             locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         }
 
+        int interval = 1000;
+        float distance = 0f;
         try {
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, interval, distance,  locationListeners[1]);
         } catch (java.lang.SecurityException e) {
@@ -115,10 +108,10 @@ public class LocationListenerService extends Service {
     public void onDestroy() {
         super.onDestroy();
         if (locationManager != null) {
-            for (int i=0; i<locationListeners.length; i++) {
+            for (LocationListener locationListener : locationListeners) {
                 try {
-                    locationManager.removeUpdates(locationListeners[i]);
-                } catch (Exception e) {
+                    locationManager.removeUpdates(locationListener);
+                } catch (Exception ignored) {
 
                 }
             }

@@ -1,4 +1,4 @@
-package com.example.mikko.sensorproject.CompassActivity;
+package com.example.mikko.sensorproject.compass;
 
 
 import android.content.Context;
@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.mikko.R;
-import com.example.mikko.sensorproject.DragUtils;
+import com.example.mikko.sensorproject.utils.DragUtils;
 import com.example.mikko.sensorproject.MainActivity;
 import com.example.mikko.sensorproject.interfaces.ChangeFragmentListener;
 import com.example.mikko.sensorproject.interfaces.DragInterface;
@@ -31,8 +31,6 @@ public class CompassFragment extends Fragment implements Compass.OnAngleChangedL
     DragUtils dragUtils;
     ChangeFragmentListener changeFragmentListener;
 
-
-    private ImageView cornerIcon;
 
     public CompassFragment() {
 
@@ -77,7 +75,7 @@ public class CompassFragment extends Fragment implements Compass.OnAngleChangedL
 
         //onStart();
 
-        cornerIcon = (ImageView) v.findViewById(R.id.cornericon);
+        ImageView cornerIcon = (ImageView) v.findViewById(R.id.cornericon);
         cornerIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

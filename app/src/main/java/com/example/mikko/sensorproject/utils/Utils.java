@@ -1,8 +1,5 @@
-package com.example.mikko.sensorproject;
+package com.example.mikko.sensorproject.utils;
 
-/**
- * Created by buckfast on 8.10.2017.
- */
 
 public final  class Utils {
 

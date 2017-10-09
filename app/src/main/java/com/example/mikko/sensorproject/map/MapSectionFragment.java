@@ -1,4 +1,4 @@
-package com.example.mikko.sensorproject;
+package com.example.mikko.sensorproject.map;
 
 import android.Manifest;
 import android.content.Context;
@@ -20,7 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.mikko.R;
-import com.example.mikko.sensorproject.AugmentedReality.CurrentLocation;
+import com.example.mikko.sensorproject.utils.Utils;
 import com.example.mikko.sensorproject.interfaces.DestinationInterface;
 import com.example.mikko.sensorproject.interfaces.UpdateInfoListener;
 import com.google.android.gms.location.LocationListener;
@@ -41,7 +41,6 @@ import com.google.maps.PendingResult;
 import com.google.maps.android.PolyUtil;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
-import com.google.maps.model.Duration;
 import com.google.maps.model.TravelMode;
 
 
@@ -60,7 +59,6 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
     private Geocoder geocoder;
     private MapView mapview;
     private ProgressBar progressBar;
-    private CurrentLocation currentLocation;
     private Location currentLoc;
     private double desLat = 0;
     private double desLon = 0;
@@ -189,7 +187,7 @@ altRoutes = new ArrayList<>();
         if (savedInstanceState != null) {
             this.savedInstanceState = savedInstanceState;
             startCentered = savedInstanceState.getBoolean("startCentered", startCentered);
-            if (startCentered == false) {progressBar.setVisibility(View.VISIBLE);}
+            if (!startCentered) {progressBar.setVisibility(View.VISIBLE);}
         } else {
             Log.i("inio", "mitaan ei seivattu ");
         }
@@ -405,41 +403,43 @@ altRoutes = new ArrayList<>();
 
                     @Override
                     public void run() {
+                        if (results.routes.length > 0) {
+                            currentRoute = 0;
+                            altRoutes.clear();
+                            for (int i = 0; i < result.routes.length; i++) {
+                                altRoutes.add(results.routes[i].overviewPolyline.getEncodedPath());
+                            }
 
-                        currentRoute = 0;
-                        altRoutes.clear();
-                        for (int i=0; i<result.routes.length; i++) {
-                            altRoutes.add(results.routes[i].overviewPolyline.getEncodedPath());
+                            lastQuery = results.routes[0].legs[0].endAddress;
+                            googleMap.clear();
+
+
+                            desLat = results.routes[0].legs[0].endLocation.lat;
+                            desLon = results.routes[0].legs[0].endLocation.lng;
+
+
+                            Log.i("inio", "jooh täs results: " + results.routes.length);
+
+                            dest.changeLocation(desLat, desLon);
+                            addPolyline(results.routes[0].overviewPolyline.getEncodedPath(), googleMap);
+                            moveCamera(results.routes[0], googleMap);
+                            addMarkers(desLat, desLon, googleMap);
+                            progressBar.setVisibility(View.GONE);
+
+                            //update info fragment's info
+                            updateInfoListener.newInfo(Utils.removeCountry(results.routes[0].legs[0].endAddress), results.routes[0].legs[0].duration, results.routes[0].legs[0].distance);
+                            FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+                            ft.setCustomAnimations(R.anim.slide_in_from_top, R.anim.slide_out_to_top);
+
+                            ft.show(info);
+                            ft.commit();
+
+
+                        } else  {
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(getActivity(), "Address not found",
+                                    Toast.LENGTH_SHORT).show();
                         }
-
-                        lastQuery = results.routes[0].legs[0].endAddress;
-                        googleMap.clear();
-
-
-
-                        desLat = results.routes[0].legs[0].endLocation.lat;
-                        desLon = results.routes[0].legs[0].endLocation.lng;
-
-
-
-                        Log.i("inio", "jooh täs results: " + results.routes.length);
-
-                        dest.changeLocation(desLat, desLon);
-                        addPolyline(results.routes[0].overviewPolyline.getEncodedPath(), googleMap);
-                        moveCamera(results.routes[0], googleMap);
-                        addMarkers(desLat,desLon, googleMap);
-                        progressBar.setVisibility(View.GONE);
-
-                        //update info fragment's info
-                        updateInfoListener.newInfo(Utils.removeCountry(results.routes[0].legs[0].endAddress), results.routes[0].legs[0].duration,results.routes[0].legs[0].distance);
-                        FragmentTransaction ft = getChildFragmentManager().beginTransaction();
-                        ft.setCustomAnimations(R.anim.slide_in_from_top, R.anim.slide_out_to_top);
-
-                        ft.show(info);
-                        ft.commit();
-
-
-
                     }
                 });
 

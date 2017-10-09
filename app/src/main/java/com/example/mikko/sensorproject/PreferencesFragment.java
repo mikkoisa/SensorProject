@@ -17,9 +17,6 @@ import android.view.ViewGroup;
 
 import com.example.mikko.R;
 
-/**
- * Created by buckfast on 25.9.2017.
- */
 public class PreferencesFragment extends PreferenceFragment {
 
     private ActionBar actionbar;
@@ -47,6 +44,7 @@ public class PreferencesFragment extends PreferenceFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
+        assert view != null;
         view.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
 
         return view;

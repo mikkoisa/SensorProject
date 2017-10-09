@@ -1,4 +1,4 @@
-package com.example.mikko.sensorproject;
+package com.example.mikko.sensorproject.camera;
 
 import android.content.Context;
 

@@ -1,4 +1,4 @@
-package com.example.mikko.sensorproject;
+package com.example.mikko.sensorproject.camera;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -42,10 +42,11 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.example.mikko.R;
-import com.example.mikko.sensorproject.CompassActivity.Compass;
+import com.example.mikko.sensorproject.compass.Compass;
 import com.example.mikko.sensorproject.interfaces.ChangeFragmentListener;
 import com.example.mikko.sensorproject.interfaces.DestinationInterface;
 import com.example.mikko.sensorproject.interfaces.DragInterface;
+import com.example.mikko.sensorproject.utils.DragUtils;
 
 import java.util.Arrays;
 
@@ -54,8 +55,6 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
 
     private BetterTextureView texture;
 
-
-    private String cameraId;
 
     private Compass compass;
 
@@ -81,8 +80,6 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
     DragUtils dragUtils;
     private DestinationInterface destinationInterface;
     boolean built = false;
-
-    private ImageView cornerIcon;
 
 
     public CameraFragment() {
@@ -139,7 +136,7 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
         Display display = ((WindowManager)getActivity().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         dragUtils.setupViewDrag(v, dragCallback);
 
-        cornerIcon = (ImageView)v.findViewById(R.id.cornericon);
+        ImageView cornerIcon = (ImageView) v.findViewById(R.id.cornericon);
         cornerIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -192,7 +189,7 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
         CameraManager manager = (CameraManager) getActivity().getSystemService(Context.CAMERA_SERVICE);
 
         try {
-            cameraId = manager.getCameraIdList()[0];
+            String cameraId = manager.getCameraIdList()[0];
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
             StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             assert map != null;
@@ -406,41 +403,9 @@ Log.i("inio", String.valueOf(imageDimension));
         float devicePercent = (float) (devicewidth / 100.0);
         float azimuthPercent = azimuth/45;
 
-       // Boolean onScreen;
-        //Set locations for target
-       /* if (azimuth < 22.5 && azimuth > -22.5) {
-            onScreen = true;
-        } else {
-            onScreen = false;
-        }
-
-        if (onScreen) {
-            if (azimuth < 22.5 && azimuth >= 15.5) {
-                azimuthPercent = 34;
-            } else if (azimuth < 15.5 && azimuth >= 7.5) {
-                azimuthPercent = 17;
-            } else if (azimuth < 7.5 && azimuth >= -7.5)
-                azimuthPercent = 0;
-            } else if (azimuth < -7.5 && azimuth >= -15.5) {
-                azimuthPercent = (-17);
-            } else if (azimuth < -15.5 && azimuth >= -22.5) {
-                azimuthPercent = (-34);
-        }
-
-        else {
-            canvas.drawCircle(devicewidth/2 - devicePercent * (azimuthPercent*100), deviceheight/2 ,100 , paint );
-            Log.i("Drew circle", String.valueOf(azimuth));
-            if (azimuth > 22.5 && azimuth < 180) {
-                canvas.drawLine(0, deviceheight / 2, 200, deviceheight / 2, paint2);
-            } else if (azimuth < -22.5 && azimuth > -180) {
-                canvas.drawLine(devicewidth, deviceheight / 2, devicewidth - 200, deviceheight / 2, paint2);
-            }
-        }
-        Log.i("pecent: " , String.valueOf(azimuthPercent));
-        canvas.drawCircle(devicewidth/2 - devicePercent* azimuthPercent, deviceheight/2, 100, paint2); */
-
 
         //The constantly changing target
+
         if (azimuth < 22.5 && azimuth > -22.5) {
             if (azimuth <10 && azimuth > -10){
                 canvas.drawLine(devicewidth/2 - 200, deviceheight/2+10, devicewidth/2 , deviceheight/4+10 , paint2 );

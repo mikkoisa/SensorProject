@@ -1,4 +1,4 @@
-package com.example.mikko.sensorproject;
+package com.example.mikko.sensorproject.utils;
 
 import android.support.v4.view.MotionEventCompat;
 import android.util.Log;

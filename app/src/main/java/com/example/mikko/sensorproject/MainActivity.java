@@ -6,17 +6,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Camera;
 import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -31,46 +27,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
-
-import android.widget.ListView;
 import android.widget.SearchView;
 
 import com.example.mikko.R;
-import com.example.mikko.sensorproject.CompassActivity.CompassFragment;
 import com.example.mikko.sensorproject.autocomplete.Autocomplete;
-import com.example.mikko.sensorproject.autocomplete.Predictions;
+import com.example.mikko.sensorproject.autocomplete.PredThread;
+import com.example.mikko.sensorproject.camera.CameraFragment;
+import com.example.mikko.sensorproject.compass.CompassFragment;
 import com.example.mikko.sensorproject.interfaces.ChangeFragmentListener;
 import com.example.mikko.sensorproject.interfaces.DestinationInterface;
 import com.example.mikko.sensorproject.interfaces.DragInterface;
-import com.google.gson.Gson;
+import com.example.mikko.sensorproject.map.MapSectionFragment;
+import com.example.mikko.sensorproject.utils.Utils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
-/**
- * Created by buckfast on 21.9.2017.
- */
+
 
 public class MainActivity extends AppCompatActivity implements DragInterface, ChangeFragmentListener, DestinationInterface {
 
     private CameraFragment camerafrag;
-    private MapSectionFragment mapfrag;
     private SearchView searchbar;
     private CompassFragment compassfrag;
 
@@ -85,8 +65,8 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
 
     private Timer timer;
 
-    BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<Runnable>(80);
-    Executor threadPoolExecutor = new ThreadPoolExecutor(60, 80, 10, TimeUnit.SECONDS, workQueue);
+//    BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(80);
+    //Executor threadPoolExecutor = new ThreadPoolExecutor(60, 80, 10, TimeUnit.SECONDS, workQueue);
 
 
     private BroadcastReceiver broadcastReceiver;
@@ -207,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
 
             searchbar = (SearchView) findViewById(R.id.searchbar);
             camerafrag = new CameraFragment();
-            mapfrag = new MapSectionFragment();
+            MapSectionFragment mapfrag = new MapSectionFragment();
 
             compassfrag = new CompassFragment();
 

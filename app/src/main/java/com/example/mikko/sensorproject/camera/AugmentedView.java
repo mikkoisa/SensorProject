@@ -1,4 +1,4 @@
-package com.example.mikko.sensorproject;
+package com.example.mikko.sensorproject.camera;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -6,21 +6,15 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
-import android.graphics.PorterDuff;
-import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 
 
 public class AugmentedView extends SurfaceView implements SurfaceHolder.Callback {
 
     private Paint paint;
     private SurfaceHolder mHolder;
-    private Context context;
     private Bitmap bmp;
 
     private int mWidth;
@@ -30,7 +24,7 @@ public class AugmentedView extends SurfaceView implements SurfaceHolder.Callback
         super(context.getActivity().getBaseContext());
         //mHolder = getHolder();
         mHolder.setFormat(PixelFormat.TRANSPARENT);
-        this.context = context.getActivity().getBaseContext();
+        Context context1 = context.getActivity().getBaseContext();
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.WHITE);
         paint.setStyle(Paint.Style.STROKE);

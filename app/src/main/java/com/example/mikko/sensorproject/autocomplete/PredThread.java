@@ -1,4 +1,4 @@
-package com.example.mikko.sensorproject;
+package com.example.mikko.sensorproject.autocomplete;
 
 import android.os.Handler;
 import android.os.Message;
@@ -11,9 +11,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/**
- * Created by Mikko on 4.10.2017.
- */
 
 public class PredThread implements Runnable {
 
@@ -44,11 +41,12 @@ public class PredThread implements Runnable {
             if (inputStream == null) {
                 mess = "ei toimi 1";
             }
+            assert inputStream != null;
             reader = new BufferedReader(new InputStreamReader(inputStream));
 
             String line;
             while ((line = reader.readLine()) != null) {
-                buffer.append(line + "\n");
+                buffer.append(line).append("\n");
             }
 
             if (buffer.length() == 0) {

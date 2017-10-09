@@ -1,10 +1,8 @@
 package com.example.mikko.sensorproject.autocomplete;
 
 import android.app.Activity;
-import android.content.Context;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -14,9 +12,6 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by buckfast on 6.10.2017.
- */
 
 public class Autocomplete {
 

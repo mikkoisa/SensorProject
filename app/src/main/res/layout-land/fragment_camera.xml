@@ -6,13 +6,13 @@
     android:orientation="vertical">
 
 
-    <com.example.mikko.sensorproject.BetterTextureView
+    <com.example.mikko.sensorproject.camera.BetterTextureView
         android:id="@+id/texture"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"/>
 
-    <com.example.mikko.sensorproject.AugmentedView
+    <com.example.mikko.sensorproject.camera.AugmentedView
         android:id="@+id/surface"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -21,7 +21,7 @@
         android:background="@android:color/transparent"
         android:orientation="vertical">
 
-    </com.example.mikko.sensorproject.AugmentedView>
+    </com.example.mikko.sensorproject.camera.AugmentedView>
 
 
     <FrameLayout

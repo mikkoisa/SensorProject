@@ -1,4 +1,4 @@
-package com.example.mikko.sensorproject.CompassActivity;
+package com.example.mikko.sensorproject.compass;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -12,7 +12,7 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.mikko.sensorproject.MapSectionFragment;
+import com.example.mikko.sensorproject.map.MapSectionFragment;
 
 
 
@@ -21,7 +21,7 @@ public class Compass implements SensorEventListener {
     private Sensor gsensor;
     private Sensor msensor;
 
-    int i = 0;
+    private int i = 0;
 
     private float[] mGravity = new float[3];
     private float[] mGeomagnetic = new float[3];
@@ -57,10 +57,10 @@ public class Compass implements SensorEventListener {
         msensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
     }
 
-    public double getDesLat() {
+    double getDesLat() {
         return deslat;
     }
-    public double getDesLon() {
+    double getDesLon() {
         return deslon;
     }
 
@@ -92,12 +92,12 @@ public class Compass implements SensorEventListener {
 
     }
 
-    public double getAzimuth() {
+    double getAzimuth() {
         return azimuth;
     }
 
     //This gets called constantly when the sensors change
-    //TODO: change update interval
+
     @Override
     public void onSensorChanged(SensorEvent event) {
         final float alpha = 0.97f;
@@ -131,7 +131,8 @@ public class Compass implements SensorEventListener {
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(R, orientation);
                 double destDeg = calculateAngle();
-                //TODO: fix the calculation ( if -destdeg gives negative value
+
+
                 azimuth = (float) Math.toDegrees(orientation[0]); // orientation
                 azimuth = (float) ((azimuth + 360) % 360 - destDeg);
 
@@ -223,86 +224,4 @@ public class Compass implements SensorEventListener {
         return distance / speed;
     }
 
-
-    //Async Task inner class for location tracking
-    /*
-    private class GetLoc extends AsyncTask<Void, Double, Void>  {
-        private FusedLocationProviderClient mFusedLocationClient;
-        private LocationRequest mLocationRequest;
-        private LocationCallback mLocationCallback;
-
-        private Location loc;
-        double mLatitude = 1;
-        double mLongitude = 1;
-        double speed = 1;
-        private boolean started = false;
-
-        //The "main-activity" of the async task class
-        protected Void doInBackground(Void... params) {
-            //Prepare the loop if not already created
-            if (!started) {
-                Looper.prepare();
-                started = true;
-            }
-            //Initiate the location request settings and callback and start the gatherign of updates
-            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(con);
-            createLocationCallback();
-            createLocationRequest();
-            startLocationUpdates();
-            Looper.loop();
-            //Permission check
-            if (ActivityCompat.checkSelfPermission(con, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(con, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Permission check
-            }
-            return null;
-        }
-
-        //These are the settings used for the request
-        void createLocationRequest() {
-            mLocationRequest = new LocationRequest();
-            mLocationRequest.setInterval(1000);
-            mLocationRequest.setFastestInterval(1000);
-            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        }
-
-        //Callback i.e handles the result of the request by publishing the results to onProgressUpdate()
-        void createLocationCallback() {
-            mLocationCallback = new LocationCallback() {
-                @Override
-                public void onLocationResult(LocationResult locationResult) {
-                    super.onLocationResult(locationResult);
-                    loc = locationResult.getLastLocation();
-                    speed = loc.getSpeed();
-                    publishProgress(loc.getLatitude(), loc.getLongitude());
-                }
-            };
-        }
-
-        //starts the loop for updating location
-        private void startLocationUpdates() {
-            if (ActivityCompat.checkSelfPermission(con, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(con, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-
-            //TODO: not sure if this needs Looper.myLooper() or null
-            mFusedLocationClient.requestLocationUpdates(mLocationRequest,
-                    mLocationCallback, Looper.myLooper());
-            publishProgress(mLatitude, mLongitude);
-        }
-
-
-        //This updates the UI with the new values
-        protected void onProgressUpdate(Double... progress) {
-            Log.i("New location: " , String.valueOf(progress[0]));
-            loclat = progress[0];
-            loclon = progress[1];
-            //tv.setText(String.valueOf(loclat) + "\n" + String.valueOf(loclon) + "\n" + String.valueOf(speed) + "\n" + String.valueOf(deslat)+ "\n" + String.valueOf(deslon)  );
-        }
-
-    }*/
 }

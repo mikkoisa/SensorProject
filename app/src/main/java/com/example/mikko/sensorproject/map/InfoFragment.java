@@ -1,4 +1,4 @@
-package com.example.mikko.sensorproject;
+package com.example.mikko.sensorproject.map;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -84,7 +84,7 @@ public class InfoFragment extends Fragment implements UpdateInfoListener {
     }
 
 
-    interface InfoListeners {
+    public interface InfoListeners {
         void onXClick();
         void onNextClick();
     }
