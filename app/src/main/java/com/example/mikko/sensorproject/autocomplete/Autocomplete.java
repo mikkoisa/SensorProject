@@ -19,7 +19,10 @@ public class Autocomplete {
     private ArrayAdapter<String> adapter;
     private List<String> suggestionListItems;
 
+    //instance of predictions that holds EVERYTHING from gson
     private Predictions predictions;
+    
+    //saves suggestion json to re-enable same suggestions after orientation change (state saving)
     public String autocompleteJson;
     private Activity a;
 
@@ -55,6 +58,8 @@ public void emptyList(){
     suggestionListItems.clear();
 }
     public String trimQueryOnClick(int position) {
+        //when suggestion is clicked, a trimmed query will be submitted to api to make it work better.
+        //it can remove commas and country from the query
         if (PreferenceManager.getDefaultSharedPreferences(a).getBoolean("autocomplete", true)) {
             if (predictions == null) {
                 Gson gson = new Gson();
@@ -86,6 +91,8 @@ public void emptyList(){
         suggestionListItems.add(sug);
     }
 
+    //populates list with new suggestions from api
+    //gson is used to transform json in pojos
     public void populateList(String json) {
         if (PreferenceManager.getDefaultSharedPreferences(a).getBoolean("autocomplete", true)) {
 
