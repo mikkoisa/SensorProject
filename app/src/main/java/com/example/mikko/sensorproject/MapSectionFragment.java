@@ -198,7 +198,7 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
             if (savedInstanceState.get("startAddress") != null && savedInstanceState.get("endAddress") != null) {
                 String start = savedInstanceState.get("startAddress").toString();
                 String end = savedInstanceState.get("endAddress").toString();
-                Log.i("inio", start + "   " + end);
+                Log.i("ingo", start + "   " + end);
 
                 DirectionsResult results = requestDirections(start, end, TravelMode.WALKING);
                 if (results != null) {

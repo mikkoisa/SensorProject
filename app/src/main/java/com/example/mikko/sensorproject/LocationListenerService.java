@@ -54,6 +54,7 @@ public class LocationListenerService extends Service {
             Intent intent = new Intent("location_update");
             intent.putExtra("lat", location.getLatitude());
             intent.putExtra("lon",  location.getLongitude());
+            intent.putExtra("spd", location.getSpeed());
             sendBroadcast(intent);
         }
 

@@ -26,13 +26,13 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
             android:id="@+id/imgPointer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="125dp"
+            android:layout_height="125dp"
+            android:layout_centerHorizontal="true"
             android:layout_centerInParent="true"
-            android:src="@drawable/ic_action_up" />
+            android:layout_centerVertical="true"
+            android:src="@drawable/arrow_final" />
 
 
     </FrameLayout>

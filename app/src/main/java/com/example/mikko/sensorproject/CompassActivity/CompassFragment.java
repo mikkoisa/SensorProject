@@ -115,8 +115,8 @@ public class CompassFragment extends Fragment implements Compass.OnAngleChangedL
     public void setDest(Double lat, Double lon){
         compass.setCoord(lat, lon);
     }
-    public void locationChanged(Double newLat, Double newLon) {
-        compass.setMyLocation(newLat, newLon);
+    public void locationChanged(Double newLat, Double newLon, Double speed) {
+        compass.setMyLocation(newLat, newLon, speed);
 
     }
 

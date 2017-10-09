@@ -381,16 +381,61 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
         paint.setColor(Color.WHITE);
+
+        Paint paint2 = new Paint();
+        paint2.setStyle(Paint.Style.STROKE);
+        paint2.setColor(Color.RED);
+
         canvas = sfhTrackHolder.lockCanvas();
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
-        float devicePercent = (float) (devicewidth/100.0);
+
+        float devicePercent = (float) (devicewidth / 100.0);
         float azimuthPercent = azimuth/45;
 
+       // Boolean onScreen;
+        //Set locations for target
+       /* if (azimuth < 22.5 && azimuth > -22.5) {
+            onScreen = true;
+        } else {
+            onScreen = false;
+        }
 
-        if (azimuth < 22.5 && azimuth > -22.5) {
+        if (onScreen) {
+            if (azimuth < 22.5 && azimuth >= 15.5) {
+                azimuthPercent = 34;
+            } else if (azimuth < 15.5 && azimuth >= 7.5) {
+                azimuthPercent = 17;
+            } else if (azimuth < 7.5 && azimuth >= -7.5)
+                azimuthPercent = 0;
+            } else if (azimuth < -7.5 && azimuth >= -15.5) {
+                azimuthPercent = (-17);
+            } else if (azimuth < -15.5 && azimuth >= -22.5) {
+                azimuthPercent = (-34);
+        }
+
+        else {
             canvas.drawCircle(devicewidth/2 - devicePercent * (azimuthPercent*100), deviceheight/2 ,100 , paint );
             Log.i("Drew circle", String.valueOf(azimuth));
+            if (azimuth > 22.5 && azimuth < 180) {
+                canvas.drawLine(0, deviceheight / 2, 200, deviceheight / 2, paint2);
+            } else if (azimuth < -22.5 && azimuth > -180) {
+                canvas.drawLine(devicewidth, deviceheight / 2, devicewidth - 200, deviceheight / 2, paint2);
+            }
+        }
+        Log.i("pecent: " , String.valueOf(azimuthPercent));
+        canvas.drawCircle(devicewidth/2 - devicePercent* azimuthPercent, deviceheight/2, 100, paint2); */
+
+
+        //The constantly changing target
+        if (azimuth < 22.5 && azimuth > -22.5) {
+            if (azimuth <10 && azimuth > -10){
+                canvas.drawLine(devicewidth/2 - 200, deviceheight/2, devicewidth/2 , deviceheight/4 , paint );
+                canvas.drawLine(devicewidth/2 , deviceheight/4 , devicewidth/2 +200, deviceheight/2 , paint );
+            } else {
+                canvas.drawCircle(devicewidth / 2 - devicePercent * (azimuthPercent * 100), deviceheight / 2, 100, paint);
+                Log.i("Drew circle", String.valueOf(azimuth));
+            }
         }
         else if (azimuth > 22.5 && azimuth < 180) {
             canvas.drawLine(0,deviceheight/2, 200, deviceheight/2, paint );
@@ -398,9 +443,6 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
         else if (azimuth < -22.5 && azimuth > -180) {
             canvas.drawLine(devicewidth, deviceheight/2, devicewidth-200, deviceheight/2, paint);
         }
-
-
-
 
         sfhTrackHolder.unlockCanvasAndPost(canvas);
     }

@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
 
                 if (currentFragment == "compass") {
                     CompassFragment compassFragment = (CompassFragment) getSupportFragmentManager().findFragmentByTag("compass");
-                    compassFragment.locationChanged((Double.parseDouble(intent.getExtras().get("lat").toString())), Double.parseDouble(intent.getExtras().get("lon").toString()));
+                    compassFragment.locationChanged((Double.parseDouble(intent.getExtras().get("lat").toString())), Double.parseDouble(intent.getExtras().get("lon").toString()), Double.parseDouble(intent.getExtras().get("spd").toString()));
                 }
 
             }

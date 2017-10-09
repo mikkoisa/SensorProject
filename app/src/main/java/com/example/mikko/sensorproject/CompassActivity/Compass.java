@@ -1,17 +1,12 @@
 package com.example.mikko.sensorproject.CompassActivity;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
+
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
-import android.os.AsyncTask;
-import android.os.Looper;
-import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
@@ -44,9 +39,11 @@ public class Compass implements SensorEventListener {
 
     private MapSectionFragment map;
 
+    private double speed;
+
     //Default location coordinates (not really used)
-    private double loclat = 60.221951;
-    private double loclon = 24.804374;
+    private double loclat = 68.221951;
+    private double loclon = 27.804374;
     //Default destination coordinates (replace with coordinates from map API)
     private double deslat = 60.175047;
     private double deslon = 24.814067;
@@ -87,10 +84,14 @@ public class Compass implements SensorEventListener {
         deslat = lon;
         deslon = lat;
     }
-    public void setMyLocation(Double lat, Double lon) {
+    public void setMyLocation(Double lat, Double lon, Double spd) {
         loclat = lat;
         loclon = lon;
-        tv.setText(String.valueOf(loclat) + "\n" + String.valueOf(loclon) + "\n" + String.valueOf(deslat)+ "\n" + String.valueOf(deslon)  );
+        speed = spd;
+
+        Double time = calculateDistance();
+
+        tv.setText(String.valueOf(loclat) + "\n" + String.valueOf(loclon) + "\n" + String.valueOf(deslat)+ "\n" + String.valueOf(deslon) + "\n" +String.valueOf(speed) + "\n" +String.valueOf(time)  );
 
     }
 
@@ -139,7 +140,7 @@ public class Compass implements SensorEventListener {
 
 
                 if (i>5){
-                    Log.i("Direction: " , String.valueOf(azimuth ) + " " + String.valueOf(destDeg));
+                   // Log.i("Direction: " , String.valueOf(azimuth ) + " " + String.valueOf(destDeg));
                     mAngleListener.onAngleChanged(azimuth);
                     i = 0;
                 }
@@ -161,8 +162,8 @@ public class Compass implements SensorEventListener {
            // Log.i("Info: ", "arrow view is not set");
             return;
         }
-        Log.i("Info: ", "will set rotation from " + correctAzimuth + " to "
-                + azimuth);
+       // Log.i("Info: ", "will set rotation from " + correctAzimuth + " to "
+        //        + azimuth);
 
         //Initialize the rotation animation
         Animation an = new RotateAnimation(-correctAzimuth, -azimuth,
@@ -207,6 +208,18 @@ public class Compass implements SensorEventListener {
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
+    private double calculateDistance(){
+        Location loc1 = new Location("");
+        loc1.setLatitude(loclat);
+        loc1.setLongitude(loclon);
+
+        Location loc2 = new Location("");
+        loc2.setLatitude(deslat);
+        loc2.setLongitude(deslon);
+
+        double distance =  loc1.distanceTo(loc2);
+        return distance / speed;
+    }
 
 
     //Async Task inner class for location tracking
