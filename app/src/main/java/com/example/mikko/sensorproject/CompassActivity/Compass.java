@@ -1,5 +1,7 @@
 package com.example.mikko.sensorproject.CompassActivity;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 
 import android.hardware.Sensor;
@@ -72,6 +74,7 @@ public class Compass implements SensorEventListener {
     public void start() {
         //GetLoc myTask = new GetLoc();
         //myTask.execute();
+
         sensorManager.registerListener(this, gsensor, SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, msensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
@@ -81,8 +84,8 @@ public class Compass implements SensorEventListener {
     }
 
     public void setCoord(Double lat, Double lon){
-        deslat = lon;
-        deslon = lat;
+        deslat = lat;
+        deslon = lon;
     }
     public void setMyLocation(Double lat, Double lon, Double spd) {
         loclat = lat;
@@ -164,6 +167,7 @@ public class Compass implements SensorEventListener {
         }
        // Log.i("Info: ", "will set rotation from " + correctAzimuth + " to "
         //        + azimuth);
+        //Log.i("Info: ", "will set rotation from " + correctAzimuth + " to "+ azimuth);
 
         //Initialize the rotation animation
         Animation an = new RotateAnimation(-correctAzimuth, -azimuth,

@@ -11,7 +11,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:clickable="true"
-    android:background="@color/paska"
+
+    android:background="@color/colorPrimarySuperDark"
     android:focusableInTouchMode="true" >
 
 
@@ -21,7 +22,10 @@
 
         android:layout_width="wrap_content"
         android:id="@+id/camera_fragment_placeholder"
-        android:layout_height="640px"></FrameLayout>
+
+        android:layout_height="960px"></FrameLayout>
+
+
     <LinearLayout
         android:orientation="vertical"
 
@@ -48,12 +52,16 @@
     </FrameLayout>
     -->
     <FrameLayout
+        android:background="@color/colorPrimary2"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <ListView
-
+            android:background="@color/colorPrimary"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginBottom="1dp"
             android:id="@+id/suggestions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

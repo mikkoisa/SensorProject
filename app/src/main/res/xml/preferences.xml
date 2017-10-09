@@ -1,49 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-        android:title="Home screen views"
-        android:key="ekakategoria">
 
-        <CheckBoxPreference
-            android:key="remembersizes"
-            android:summary="Remember split-screen view sizes"
-            android:title="Remember view sizes"
-            android:defaultValue="true"/>
+        android:key="ekakategoria"
+        android:title="Home screen">
+
 
         <ListPreference
+            android:entries="@array/viewpref"
+            android:entryValues="@array/viewprefvalues"
             android:key="defaultview"
-            android:title="Default view"
-            android:summary="Define whether to display a compass or AR view on the home screen"
-
-            />
+            android:summary="Define whether to display a compass or AR view on the home screen at startup"
+            android:title="Default view"  />
 
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="Map"
-        android:key="tokakategoria">
+        android:key="tokakategoria"
+        android:title="Map">
 
         <CheckBoxPreference
-            android:key="autocomplete"
-            android:summary="Enable or disable autocomplete"
-            android:title="Enable autocomplete"
-            android:defaultValue="true"/>
-
-        <ListPreference
-            android:key="language"
-             android:summary="Select preferred language for autocomplete"
-            android:title="Autocomplete language"
-
-            ></ListPreference>
-
-        <CheckBoxPreference
+            android:defaultValue="false"
             android:key="followlocation"
             android:summary="Enable or disable location auto follow"
-            android:title="Follow your location"
-            android:defaultValue="false"/>
+            android:title="Follow your location" />
+
 
     </PreferenceCategory>
 
+
+    <PreferenceCategory
+        android:key="tokakategoria"
+        android:title="Autocomplete">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="autocomplete"
+            android:summary="Enable or disable autocomplete"
+            android:title="Enable autocomplete" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="near"
+            android:summary="Select whether to predict nearby places only"
+            android:title="Show nearby places only"></CheckBoxPreference>
+
+
+    </PreferenceCategory>
 
 
 </PreferenceScreen>

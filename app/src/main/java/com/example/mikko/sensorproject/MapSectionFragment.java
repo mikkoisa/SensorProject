@@ -6,62 +6,76 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.mikko.R;
 import com.example.mikko.sensorproject.AugmentedReality.CurrentLocation;
 import com.example.mikko.sensorproject.interfaces.DestinationInterface;
+import com.example.mikko.sensorproject.interfaces.UpdateInfoListener;
 import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.DirectionsApi;
+import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
+import com.google.maps.PendingResult;
 import com.google.maps.android.PolyUtil;
-import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
+import com.google.maps.model.Duration;
 import com.google.maps.model.TravelMode;
+
 
 import org.joda.time.DateTime;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 
-public class MapSectionFragment extends Fragment implements OnMapReadyCallback, LocationListener, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
+public class MapSectionFragment extends Fragment implements OnMapReadyCallback, LocationListener, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, InfoFragment.InfoListeners {
 
     private GoogleMap googleMap;
     private Geocoder geocoder;
     private MapView mapview;
+    private ProgressBar progressBar;
     private CurrentLocation currentLocation;
     private Location currentLoc;
-    private double desLat = 1.1;
-    private double desLon = 2.2;
-    private String lastQuery ="";
+    private double desLat = 0;
+    private double desLon = 0;
+    private String lastQuery = "";
     private Bundle savedInstanceState;
     private DestinationInterface dest;
     private boolean startCentered = false;
     private LatLng firstPolyLine;
+    private DirectionsApiRequest apiRequest;
+    public DirectionsResult results;
+    private InfoFragment info;
+    private UpdateInfoListener updateInfoListener;
+    private int currentRoute = 0;
+    private ArrayList<String> altRoutes;
+
     public MapSectionFragment() {
 
     }
@@ -88,6 +102,8 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         mapview = (MapView) v.findViewById(R.id.mapview);
+        progressBar = (ProgressBar) v.findViewById(R.id.progressbar);
+altRoutes = new ArrayList<>();
         MapsInitializer.initialize(getContext());
         geocoder = new Geocoder(getContext(), Locale.getDefault());
         // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
@@ -95,8 +111,32 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
         setRetainInstance(true);
 
 
+        info = new InfoFragment();
+        FragmentTransaction fm = getChildFragmentManager().beginTransaction();
+
+        fm.replace(R.id.info_fragment_placeholder, info, "info");
+
+        if (savedInstanceState != null) {
+            if (!savedInstanceState.getBoolean("infoVisible", false)) {
+                fm.show(info);
+            }
+        } else {
+            fm.hide(info);
+        }
+
+
+        fm.commit();
+        updateInfoListener = (UpdateInfoListener) info;
+
 
         return v;
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
     }
 
     @Override
@@ -109,7 +149,29 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
             outState.putString("endAddress", lastQuery);
         }
         outState.putBoolean("startCentered", startCentered);
+        if (info != null) {
+            if (info.isVisible()) {
+                outState.putBoolean("infoVisible", true);
+            }
+        }
+
+        outState.putInt("altRoutesAmount", altRoutes.size());
+        outState.putInt("currentRoute", currentRoute);
+        if (!altRoutes.isEmpty()) {
+            for (int i=0; i<altRoutes.size(); i++) {
+                outState.putString("altRoute"+i, altRoutes.get(i));
+
+            }
+        }
+
+        outState.putDouble("targetlat",googleMap.getCameraPosition().target.latitude);
+        outState.putDouble("targetlon",googleMap.getCameraPosition().target.longitude);
+        outState.putFloat("tilt",googleMap.getCameraPosition().tilt);
+        outState.putFloat("bearing",googleMap.getCameraPosition().bearing);
+        outState.putFloat("zoom", googleMap.getCameraPosition().zoom);
     }
+
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -120,13 +182,11 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
         //mapview.onResume();
         mapview.getMapAsync(this);
 
-        Log.i("inio","map onviewcreated");
+        Log.i("inio", "map onviewcreated");
         if (savedInstanceState != null) {
-            this.savedInstanceState =savedInstanceState;
+            this.savedInstanceState = savedInstanceState;
             startCentered = savedInstanceState.getBoolean("startCentered", startCentered);
-
-
-
+            if (startCentered == false) {progressBar.setVisibility(View.VISIBLE);}
         } else {
             Log.i("inio", "mitaan ei seivattu ");
         }
@@ -137,14 +197,6 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
 
     }
 
-    /*
-        @Override
-        public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-            super.onViewCreated(view, savedInstanceState);
-           // SupportMapFragment smf = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapppi);
-            //smf.getMapAsync(this);
-        }
-    */
     @Override
     public void onResume() {
         super.onResume();
@@ -153,9 +205,10 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
 
     private Address getCurrentAddress() {
         List<Address> addresses = null;
-        Log.i("inio", "FUUUK "+String.valueOf(currentLoc.getLatitude())+" "+String.valueOf(currentLoc.getLongitude()));
+        Log.i("inio", "FUUUK " + String.valueOf(currentLoc.getLatitude()) + " " + String.valueOf(currentLoc.getLongitude()));
         try {
-            addresses = geocoder.getFromLocation(currentLoc.getLatitude(), currentLoc.getLongitude(),1);
+            addresses = geocoder.getFromLocation(currentLoc.getLatitude(), currentLoc.getLongitude(), 1);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -168,11 +221,27 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
 
     }
 
+    private Address getAddress(Location location) {
+        List<Address> addresses = null;
+        try {
+            addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (addresses.size() != 0) {
+            return addresses.get(0);
+        } else {
+            return null;
+        }
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
 
-        Log.i("inio","onmapready");
+        Log.i("inio", "onmapready");
 
         googleMap.setOnMyLocationButtonClickListener(this);
         googleMap.setOnMyLocationClickListener(this);
@@ -191,88 +260,46 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
         setupGoogleMapScreenSettings(googleMap);
 
 
-
         if (this.savedInstanceState != null) {
 
-            // Restore last state
+            Log.i("inio", "altroutes amount: "+String.valueOf(savedInstanceState.getInt("altRoutesAmount")));
+            Log.i("inio", "current route: "+String.valueOf( savedInstanceState.getInt("currentRoute")));
+
+            for (int i=0; i<savedInstanceState.getInt("altRoutesAmount"); i++) {
+                altRoutes.add(savedInstanceState.getString("altRoute"+i));
+            }
+            currentRoute = savedInstanceState.getInt("currentRoute");
+
+
+            //restore last state
             if (savedInstanceState.get("startAddress") != null && savedInstanceState.get("endAddress") != null) {
                 String start = savedInstanceState.get("startAddress").toString();
                 String end = savedInstanceState.get("endAddress").toString();
                 Log.i("ingo", start + "   " + end);
 
-                DirectionsResult results = requestDirections(start, end, TravelMode.WALKING);
-                if (results != null) {
-                    Log.i("inio", "noniin!!!!!!!1");
-                    lastQuery = end;
-                    googleMap.clear();
-                    desLat = results.routes[0].legs[0].endLocation.lat;
-                    desLon = results.routes[0].legs[0].endLocation.lng;
-                    dest.changeLocation(desLat, desLon);
-                    addPolyline(results, googleMap);
-                    moveCamera(results.routes[0], googleMap);
-                    addMarkers(results, googleMap);
-
-                }
+                requestDirections(start, lastQuery);
             }
-        } else {
-
-        }
-/*
-            DirectionsResult results = getDirectionsDetails("vanha maantie 6 espoo", "Leppävaaran asema", TravelMode.WALKING);
-            if (results != null) {
-
-                addPolyline(results, googleMap);
-                moveCamera(results.routes[0], googleMap);
-                addMarkers(results, googleMap);
 
 
-            }*/
 
-    }
-
-    public void searchForLocation(String query) {
-        Address myAddress = getCurrentAddress();
-
-        if (myAddress != null) {
-            Log.i("inio", myAddress.getAddressLine(0));
-
-            DirectionsResult results = requestDirections(myAddress.getAddressLine(0), query, TravelMode.WALKING);
-            if (results != null) {
-
-
-                lastQuery = query;
-                googleMap.clear();
-                if (results.routes.length  != 0) {
-                    desLat = results.routes[0].legs[0].endLocation.lat;
-                    desLon = results.routes[0].legs[0].endLocation.lng;
-                    dest.changeLocation(desLat, desLon);
-                    addPolyline(results, googleMap);
-                    moveCamera(results.routes[0], googleMap);
-                    addMarkers(results, googleMap);
-                }
-
-            } else {
-                Toast.makeText(getContext(), "Cannot locate "+query, Toast.LENGTH_SHORT).show();
-            }
         } else {
 
         }
 
+
     }
 
 
-
-    private void addPolyline(DirectionsResult results, GoogleMap mMap) {
-        List<LatLng> path = PolyUtil.decode(results.routes[0].overviewPolyline.getEncodedPath());
+    private void addPolyline(String polyline, GoogleMap mMap) {
+        List<LatLng> path = PolyUtil.decode(polyline);
         firstPolyLine = path.get(1);
         //mMap.addMarker(new MarkerOptions().position(path.get(1)));
 
         mMap.addPolyline(new PolylineOptions().addAll(path));
     }
 
-    private void addMarkers(DirectionsResult results, GoogleMap mMap) {
-        //mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].startLocation.lat,results.routes[0].legs[0].startLocation.lng)).title(results.routes[0].legs[0].startAddress));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(results.routes[0].legs[0].endLocation.lat,results.routes[0].legs[0].endLocation.lng)).title(results.routes[0].legs[0].startAddress));
+    private void addMarkers(Double lat, Double lon, GoogleMap mMap) {
+        mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lon)));
     }
 
     private void moveCamera(DirectionsRoute route, GoogleMap mMap) {
@@ -281,27 +308,39 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
         Double bLength = (firstPolyLine.latitude - currentLoc.getLatitude());
         float angleA = (float) Math.toDegrees(Math.atan2(aLength, bLength));
         Log.i("inio", String.valueOf(angleA));
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(target)
-                .zoom(17)
-                .bearing(angleA-10) //90 = east
-                .tilt(45)
-                .build();
+
+        CameraPosition cameraPosition;
+        if (savedInstanceState == null) {
+            cameraPosition = new CameraPosition.Builder()
+                    .target(target)
+                    .zoom(17)
+                    .bearing(angleA - 10) //90 = east
+                    .tilt(45)
+                    .build();
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+
+        } else {
+            cameraPosition = new CameraPosition.Builder()
+                    .target(new LatLng(savedInstanceState.getDouble("targetlat"), savedInstanceState.getDouble("targetlon")))
+                    .zoom(savedInstanceState.getFloat("zoom"))
+                    .bearing(savedInstanceState.getFloat("bearing")) //90 = east
+                    .tilt(savedInstanceState.getFloat("tilt"))
+                    .build();
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+        }
 
         //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(route.legs[0].startLocation.lat, route.legs[0].startLocation.lng), 16));
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
     }
-
-
-
 
 
     private void setupGoogleMapScreenSettings(GoogleMap mMap) {
         mMap.setBuildingsEnabled(true);
         mMap.setIndoorEnabled(true);
         UiSettings mUiSettings = mMap.getUiSettings();
-        mUiSettings.setZoomControlsEnabled(true);
+        mUiSettings.setZoomControlsEnabled(false);
         mUiSettings.setCompassEnabled(true);
         mUiSettings.setMyLocationButtonEnabled(true);
         mUiSettings.setScrollGesturesEnabled(true);
@@ -320,47 +359,123 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
                 .setWriteTimeout(1, TimeUnit.SECONDS);
     }
 
-    private DirectionsResult requestDirections(String origin,String destination,TravelMode mode) {
-        DateTime now = new DateTime();
-        try {
-            return DirectionsApi.newRequest(getGeoContext())
-                    .mode(mode)
-                    .origin(origin)
-                    .destination(destination)
-                    .departureTime(now)
-                    .await();
-        } catch (ApiException e) {
-            e.printStackTrace();
-            return null;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+
+    public DirectionsResult requestDirections(final String start, final String destination) {
+
+        Address myAddress = getCurrentAddress();
+
+        if (myAddress == null) {
+            List<Address> addresses = null;
+            try {
+                addresses = geocoder.getFromLocationName(start, 1);
+                myAddress = addresses.get(0);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+        //if (myAddress != null) {
+
+
+        DateTime now = new DateTime();
+        DirectionsApiRequest apiRequest = DirectionsApi.newRequest(getGeoContext());
+        apiRequest.mode(TravelMode.WALKING);
+        apiRequest.origin(myAddress.getAddressLine(0));
+        apiRequest.destination(destination);
+        apiRequest.alternatives(true);
+        apiRequest.departureTime(now);
+        //.await();
+
+        progressBar.setVisibility(View.VISIBLE);
+        apiRequest.setCallback(new PendingResult.Callback<DirectionsResult>() {
+            @Override
+            public void onResult(final DirectionsResult result) {
+
+                results = result;
+                getActivity().runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+
+                        currentRoute = 0;
+                        altRoutes.clear();
+                        for (int i=0; i<result.routes.length; i++) {
+                            altRoutes.add(results.routes[i].overviewPolyline.getEncodedPath());
+                        }
+
+                        lastQuery = results.routes[0].legs[0].endAddress;
+                        googleMap.clear();
+
+
+
+                        desLat = results.routes[0].legs[0].endLocation.lat;
+                        desLon = results.routes[0].legs[0].endLocation.lng;
+
+
+
+                        Log.i("inio", "jooh täs results: " + results.routes.length);
+
+                        dest.changeLocation(desLat, desLon);
+                        addPolyline(results.routes[0].overviewPolyline.getEncodedPath(), googleMap);
+                        moveCamera(results.routes[0], googleMap);
+                        addMarkers(desLat,desLon, googleMap);
+                        progressBar.setVisibility(View.GONE);
+
+
+                        updateInfoListener.newInfo(Utils.removeCountry(results.routes[0].legs[0].endAddress), results.routes[0].legs[0].duration,results.routes[0].legs[0].distance);
+                        FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+                        ft.setCustomAnimations(R.anim.slide_in_from_top, R.anim.slide_out_to_top);
+
+                        ft.show(info);
+                        ft.commit();
+
+
+
+                    }
+                });
+
+            }
+
+
+
+
+            @Override
+            public void onFailure(Throwable e) {
+                Log.i("inio", String.valueOf(e));
+                getActivity().runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
+            }
+        });
+
+        return null;
+    }
+
+    private void changePolyline() {
+        currentRoute++;
+        googleMap.clear();
+        if (desLat != 0) {
+            addMarkers(desLat,desLon, googleMap);
+        }
+        addPolyline(altRoutes.get(currentRoute%altRoutes.size()), googleMap);
+
+
     }
 
 
-    @Override
-    public void onLocationChanged(Location location) {
-        //TODO: asetus että kamera seuraa itteä
-
-    }
-    public String[] getLastRoute() {
-        String[] locations = new String[2];
-
-        return locations;
-    }
     @Override
     public boolean onMyLocationButtonClick() {
-        Toast.makeText(getContext(), "AHH:\n", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getContext(), "AHH:\n", Toast.LENGTH_LONG).show();
+
         return false;
     }
 
     @Override
     public void onMyLocationClick(@NonNull Location location) {
-        Toast.makeText(getContext(), "Current location:\n" + location, Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), "Current location:\n" + getAddress(location).getAddressLine(0), Toast.LENGTH_SHORT).show();
 
     }
 
@@ -376,12 +491,65 @@ public class MapSectionFragment extends Fragment implements OnMapReadyCallback, 
         currentLoc.setLatitude(newLat);
         currentLoc.setLongitude(newLon);
 
+
+        /*
+        LatLng loc= new LatLng(currentLoc.getLatitude(),currentLoc.getLongitude());
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(loc)
+                .build();
+                googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));*/
         if (!startCentered) {
-            Log.i("inio", "shiiett "+currentLoc.getLatitude()+" "+ currentLoc.getLongitude());
+            progressBar.setVisibility(View.GONE);
+            Log.i("inio", "shiiett " + currentLoc.getLatitude() + " " + currentLoc.getLongitude());
             LatLng latLng = new LatLng(currentLoc.getLatitude(), currentLoc.getLongitude());
             this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
             startCentered = true;
         }
+
+
+    }
+
+
+    public void toggleInfo() {
+        Log.i("inio", "asdsa");
+        FragmentTransaction fm = getChildFragmentManager().beginTransaction();
+
+
+        if (info == null) {
+            fm = getChildFragmentManager().beginTransaction();
+
+            Log.i("inio", "jooh null");
+            info = new InfoFragment();
+            fm.add(R.id.info_fragment_placeholder, info, "info");
+            fm.commit();
+        } else {
+            Log.i("inio", "jooh ei oo null");
+            fm = getChildFragmentManager().beginTransaction();
+            fm.setCustomAnimations(R.anim.slide_in_from_top, R.anim.slide_out_to_top);
+            if (!info.isVisible()) {
+
+                fm.show(info);
+
+            } else {
+                fm.hide(info);
+            }
+
+            fm.commit();
+        }
+    }
+
+    @Override
+    public void onXClick() {
+        toggleInfo();
+    }
+
+    @Override
+    public void onNextClick() {
+        this.changePolyline();
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
 
 
     }

@@ -1,6 +1,6 @@
 package com.example.mikko.sensorproject.interfaces;
 
 public interface DestinationInterface {
-    void changeLocation (Double longitude, Double latitude);
+    void changeLocation (Double latitude, Double longitude);
     //double getAzimuth();
 }

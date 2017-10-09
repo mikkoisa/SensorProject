@@ -7,12 +7,15 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +38,7 @@ import android.widget.SearchView;
 
 import com.example.mikko.R;
 import com.example.mikko.sensorproject.CompassActivity.CompassFragment;
+import com.example.mikko.sensorproject.autocomplete.Autocomplete;
 import com.example.mikko.sensorproject.autocomplete.Predictions;
 import com.example.mikko.sensorproject.interfaces.ChangeFragmentListener;
 import com.example.mikko.sensorproject.interfaces.DestinationInterface;
@@ -69,11 +73,6 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
     private SearchView searchbar;
     private CompassFragment compassfrag;
 
-    private ListView suggestionList;
-    private ArrayAdapter<String> adapter;
-    private List<String> suggestionListItems;
-
-    private Predictions predictions;
 
     private DisplayMetrics displayMetrics = new DisplayMetrics();
     private Point screenSize;
@@ -92,8 +91,11 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
     private BroadcastReceiver broadcastReceiver;
 
     private Location myLocation;
+    private Location lastDestination;
 
-    private String autocompleteJson;
+   // private String autocompleteJson;
+
+    private Autocomplete autocomplete;
 
     // private TextView latlon;
 
@@ -108,7 +110,22 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPref.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                Log.i("inio", "changed");
 
+            }
+        });
+
+        autocomplete = new Autocomplete(this);
+        autocomplete.setVisibility(View.GONE);
+
+        lastDestination = new Location("destination");
+        lastDestination.setLatitude(24);
+        lastDestination.setLongitude(60);
 
         screenSize = new Point();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -117,7 +134,14 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
         Display display = getWindowManager().getDefaultDisplay();
         display.getRealSize(realScreenSize);
 
-        currentFragment = "camera";
+
+
+        currentFragment = sharedPref.getString("defaultview", "compass");
+        Log.i("inio", "defaultview: "+sharedPref.getString("defaultview", "paska ei löydy"));
+
+
+
+
 
         myLocation = new Location("myLocation");
 
@@ -129,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
             public void onReceive(Context context, Intent intent) {
 
                 // latlon.setText(intent.getExtras().get("lat")+",  "+intent.getExtras().get("lon") );
+
                 String s = intent.getExtras().get("lat").toString();
                 s += " " + intent.getExtras().get("lon").toString();
                 Log.i("inio ", s);
@@ -140,10 +165,15 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
                     mapFragment.locationChanged((Double.parseDouble(intent.getExtras().get("lat").toString())), Double.parseDouble(intent.getExtras().get("lon").toString()));
                 }
 
-                if (currentFragment == "compass") {
+
+
                     CompassFragment compassFragment = (CompassFragment) getSupportFragmentManager().findFragmentByTag("compass");
-                    compassFragment.locationChanged((Double.parseDouble(intent.getExtras().get("lat").toString())), Double.parseDouble(intent.getExtras().get("lon").toString()), Double.parseDouble(intent.getExtras().get("spd").toString()));
-                }
+                    if (compassFragment != null ) {
+
+                        compassFragment.locationChanged((Double.parseDouble(intent.getExtras().get("lat").toString())), Double.parseDouble(intent.getExtras().get("lon").toString()));
+                    }
+
+
 
             }
         };
@@ -156,11 +186,6 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
         getSupportActionBar().setCustomView(R.layout.actionbar);
 
 
-        suggestionListItems = new ArrayList<>();
-        suggestionList = (ListView) findViewById(R.id.suggestions);
-        // suggestionList = (ListView) getSupportActionBar().getCustomView().findViewById(R.id.suggestions);
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, suggestionListItems);
-        suggestionList.setAdapter(adapter);
 
 
         if (savedInstanceState == null) {
@@ -187,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
         } else {
 
             for (int i = 0; i < savedInstanceState.getInt("SUGGESTIONS_AMOUNT"); i++) {
-                suggestionListItems.add(savedInstanceState.getString("SUGGESTION" + i));
+                autocomplete.addToList(savedInstanceState.getString("SUGGESTION" + i));
             }
 
 
@@ -207,10 +232,10 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
             fl.setLayoutParams(params);
 
             if (savedInstanceState.getBoolean("SUGGESTIONS_VISIBLE")) {
-                suggestionList.setVisibility(View.VISIBLE);
+                autocomplete.setVisibility(View.VISIBLE);
             }
 
-            autocompleteJson = savedInstanceState.getString("AUTOCOMPLETE_JSON");
+            autocomplete.autocompleteJson = savedInstanceState.getString("AUTOCOMPLETE_JSON");
 
             //Log.i("inio", "tääällä taas");
             searchbar = (SearchView) findViewById(R.id.searchbar);
@@ -228,34 +253,60 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
         } catch(IllegalArgumentException e) {
             Log.e("onpause","unregisteriging broadcast", e);
         }
+
+        sharedPref.edit().putInt("DRAG_STATE", currentDragState).commit();
     }
 
     @Override
     public void onBackPressed() {
-        if (suggestionList.getVisibility() != View.VISIBLE) {
+        if (autocomplete.getVisibility() != View.VISIBLE) {
             super.onBackPressed();
         }
 
-        getSupportActionBar().getCustomView().findViewById(R.id.searchbar).setVisibility(View.VISIBLE);
-        getSupportActionBar().getCustomView().findViewById(R.id.titlebar).setVisibility(View.GONE);
-        suggestionList.setVisibility(View.GONE);
+
+        autocomplete.setVisibility(View.GONE);
 
     }
+
+    public Point navSize() {
+        //nav right
+        if (screenSize.x < realScreenSize.x) {
+            return new Point(realScreenSize.x - screenSize.x, screenSize.y);
+        }
+        //nav bottom
+        if (screenSize.y < realScreenSize.y) {
+            return new Point(screenSize.x, realScreenSize.y - screenSize.y);
+        }
+        return new Point();
+    }
+
 
     @Override
     public void dragData(float width, float height) {
         FrameLayout fl = (FrameLayout) findViewById(R.id.camera_fragment_placeholder);
         //fl.getLayoutParams().height += (int)height/2;
-        Log.i("inio", "real; " + realScreenSize + "     usable; " + screenSize);
+        //Log.i("inio", "real; " + realScreenSize + "     usable; " + screenSize);
         //real; Point(1080, 1920)     usable; Point(1812, 1080)
+
+        TypedValue tv = new TypedValue();
+        this.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true);
+        int actionBarHeight = getResources().getDimensionPixelSize(tv.resourceId); //168
+        Log.i("inio", "actionbar: "+String.valueOf(actionBarHeight)+"   navbar: "+navSize());
+
 
         ViewGroup.LayoutParams params = fl.getLayoutParams();
 
         if (getResources().getConfiguration().orientation == 1) {
-            params.height += (int) height;
+            if (params.height>=62) {
+                params.height += (int) height;
+            } else {
+                params.height=62;
+            }
+
         } else {
             params.width += (int) width;
         }
+        Log.i("inio", String.valueOf(params.height));
         fl.setLayoutParams(params);
     }
 
@@ -276,20 +327,20 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
         }
 
 
-        if (suggestionList.getVisibility() == View.VISIBLE) {
+        if (autocomplete.getVisibility() == View.VISIBLE) {
             outState.putBoolean("SUGGESTIONS_VISIBLE", true);
-            outState.putInt("SUGGESTIONS_AMOUNT", suggestionListItems.size());
-            for (int i = 0; i < suggestionListItems.size(); i++) {
-                outState.putString("SUGGESTION" + i, suggestionListItems.get(i));
+            outState.putInt("SUGGESTIONS_AMOUNT", autocomplete.getSuggestionsAmount());
+            for (int i = 0; i < autocomplete.getSuggestionsAmount(); i++) {
+                outState.putString("SUGGESTION" + i, autocomplete.getSuggestion(i));
             }
-        } else if (suggestionList.getVisibility() == View.GONE) {
+        } else if (autocomplete.getVisibility() == View.GONE) {
             outState.putBoolean("SUGGESTIONS_VISIBLE", false);
 
         }
 
         outState.putString("FRAGMENT_STATE", currentFragment);
         outState.putInt("DRAG_STATE", currentDragState);
-        outState.putString("AUTOCOMPLETE_JSON", autocompleteJson);
+        outState.putString("AUTOCOMPLETE_JSON", autocomplete.autocompleteJson);
     }
 
     @Override
@@ -298,52 +349,41 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
 
     }
 
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
 
+        getSupportActionBar().getCustomView().findViewById(R.id.searchbar).setVisibility(View.VISIBLE);
+        getSupportActionBar().getCustomView().findViewById(R.id.titlebar).setVisibility(View.GONE);
 
-        suggestionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        autocomplete.getSuggestionList().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                autocomplete.setVisibility(View.GONE);
 
-                searchbar.setQuery(removeCountry(suggestionListItems.get(position)),false);
+                searchbar.setQuery(Utils.removeCountry(autocomplete.getSuggestion(position)),false);
 
-                if (predictions == null) {
-                    Gson gson = new Gson();
-                    predictions = gson.fromJson(autocompleteJson , Predictions.class);
-                }
-                StringBuilder sb = new StringBuilder();
-                for (int i=0; i<predictions.getPredictions().get(position).getTerms().size()-1; i++) {
-                    sb.append(predictions.getPredictions().get(position).getTerms().get(i).getValue());
-                    if (i<predictions.getPredictions().get(position).getTerms().size()-1) {
-                        sb.append(" ");
-                    }
-                }
-
-                Log.i("inio", sb.toString());
-
-                submitQuery(sb.toString());
+                submitQuery(autocomplete.trimQueryOnClick(position));
 
 
-
-                suggestionList.setVisibility(View.GONE);
             }
         });
         searchbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                suggestionList.setVisibility(View.VISIBLE);
+                autocomplete.setVisibility(View.VISIBLE);
             }
         });
         searchbar.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    suggestionList.setVisibility(View.VISIBLE);
+                    autocomplete.setVisibility(View.VISIBLE);
                 } else {
-                    suggestionList.setVisibility(View.GONE);
+                    autocomplete.setVisibility(View.GONE);
                 }
             }
         });
@@ -351,7 +391,7 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
         searchbar.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                suggestionList.setVisibility(View.GONE);
+                autocomplete.setVisibility(View.GONE);
                 return false;
             }
         });
@@ -360,65 +400,69 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
             @Override
             public boolean onQueryTextChange(final String newText) {
                 if (newText.isEmpty()) {
-                    suggestionList.setVisibility(View.GONE);
+                    autocomplete.setVisibility(View.GONE);
                 } else {
-                    suggestionList.setVisibility(View.VISIBLE);
-                }
-                if (timer != null) {
-                    timer.cancel();
+                    autocomplete.setVisibility(View.VISIBLE);
                 }
 
-                timer = new Timer();
-                timer.schedule(new TimerTask() {
+                if (sharedPref.getBoolean("autocomplete", true)) {
+                    if (timer != null) {
+                        timer.cancel();
+                    }
 
-                    @Override
-                    public void run() {
-                        runOnUiThread(new Runnable() {
+                    if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("autocomplete", true)) {
+
+                        timer = new Timer();
+                        timer.schedule(new TimerTask() {
+
                             @Override
                             public void run() {
-                                //progressbar for waiting for results
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        //progressbar for waiting for results
 
-                                getSupportActionBar().getCustomView().findViewById(R.id.progressbar).setVisibility(View.VISIBLE);
+                                        getSupportActionBar().getCustomView().findViewById(R.id.progressbar).setVisibility(View.VISIBLE);
 
-                            }
-                        });
-
-                        try {
-                            Thread.sleep(1500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                //maybe hide progressbar
-                                getSupportActionBar().getCustomView().findViewById(R.id.progressbar).setVisibility(View.GONE);
-
-                                //TextView tv = (TextView) findViewById(R.id.tekstview);
-                                // tv.setText("haettu "+newText);
+                                    }
+                                });
 
                                 try {
-                                    String encodedQuery = URLEncoder.encode(newText, "UTF-8");
-                                    URL places = new URL("https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" + encodedQuery + "&location=" + myLocation.getLatitude() + "," + myLocation.getLongitude() + "&radius=2000&key=AIzaSyBaUTD9YbQSNZlaBFRHW2t5GsBeI6CPv-A");
-                                  //  Log.i("urli on: " , suggestionListItems.get(0));
-                                   // getPredictions.executeOnExecutor(threadPoolExecutor, places);
-
-                                    //THread here
-                                    PredThread sc = new PredThread(uiHandler, places);
-                                    Thread t = new Thread(sc);
-                                    t.start();
-
-
-
-
-                                } catch (Exception e) {
-                                    Log.e("error","url", e);
+                                    Thread.sleep(1500);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
                                 }
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        //maybe hide progressbar
+                                        getSupportActionBar().getCustomView().findViewById(R.id.progressbar).setVisibility(View.GONE);
+
+                                        //TextView tv = (TextView) findViewById(R.id.tekstview);
+                                        // tv.setText("haettu "+newText);
+
+                                        try {
+                                            String encodedQuery = URLEncoder.encode(newText, "UTF-8");
+                                            URL places = new URL("https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" + encodedQuery + "&location=" + myLocation.getLatitude() + "," + myLocation.getLongitude() + "&radius=10000&strictbounds&key=AIzaSyBaUTD9YbQSNZlaBFRHW2t5GsBeI6CPv-A");
+                                            //  Log.i("urli on: " , suggestionListItems.get(0));
+                                            // getPredictions.executeOnExecutor(threadPoolExecutor, places);
+
+                                            //THread here
+                                            PredThread sc = new PredThread(uiHandler, places);
+                                            Thread t = new Thread(sc);
+                                            t.start();
+
+
+                                        } catch (Exception e) {
+                                            Log.e("error", "url", e);
+                                        }
+                                    }
+                                });
                             }
-                        });
+                        }, 500);
                     }
-                }, 500);
+                }
 
                 return true;
             }
@@ -438,18 +482,12 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
         public void handleMessage(Message msg) {
             if (msg.what == 0){
 
-                Gson gson = new Gson();
-                predictions = gson.fromJson(msg.obj.toString() , Predictions.class);
-                autocompleteJson = msg.obj.toString();
-                suggestionListItems.clear();
-                for (int i = 0; i < predictions.getPredictions().size(); i++) {
-                    suggestionListItems.add(predictions.getPredictions().get(i).getDescription());
-                }
-                adapter.notifyDataSetChanged();
+                autocomplete.populateList(msg.obj.toString());
             }
         }
     };
 
+    /*
     private String removeCountry(String string) {
         if (string.length() > 0) {
             int lastComma = string.lastIndexOf(",");
@@ -459,20 +497,20 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
             }
         }
         return null;
-    }
+    }*/
 
     private void submitQuery(String query) {
         if (timer != null) {
             timer.cancel();
         }
-        suggestionList.setVisibility(View.GONE);
+        autocomplete.setVisibility(View.GONE);
 
         hideKeyboard();
         Log.i("inio",query);
         MapSectionFragment mapFragment = (MapSectionFragment) getSupportFragmentManager().findFragmentByTag("map");
         if (mapFragment != null) {
 
-            mapFragment.searchForLocation(query);
+            mapFragment.requestDirections(" ",query);
 
 
 
@@ -486,7 +524,7 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
         inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
     }
 
-
+/*
     AsyncTask<URL, Void, String> getPredictions = new AsyncTask<URL, Void, String>() {
 
         @Override
@@ -559,40 +597,77 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
             adapter.notifyDataSetChanged();
         }
     };
-
+*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_manage) {
-            getFragmentManager().beginTransaction().replace(android.R.id.content, new PreferencesFragment()).addToBackStack("prefs").commit();
-            suggestionList.setVisibility(View.GONE);
+        switch (item.getItemId()) {
+            case R.id.action_manage:
+                getFragmentManager().beginTransaction().replace(android.R.id.content, new PreferencesFragment()).addToBackStack("prefs").commit();
+                autocomplete.setVisibility(View.GONE);
+                break;
+            case R.id.action_info:
+                MapSectionFragment f  = (MapSectionFragment) getSupportFragmentManager().findFragmentByTag("map");
+                if (f!= null) {
+                    f.toggleInfo();
+                }
+                break;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
+
+
     @Override
     public void changeEvent(String to) {
-        if (currentFragment == "camera") {
+
+        if ((getSupportFragmentManager().findFragmentByTag("compass") == null)) {
             System.out.println("VAIHETAAN COMPASSIFRAGMENTTIIN");
             FragmentTransaction fm = getSupportFragmentManager().beginTransaction();
             compassfrag = new CompassFragment();
+            Bundle bundle = new Bundle();
+            bundle.putDouble("latitude", lastDestination.getLatitude());
+            bundle.putDouble("longitude", lastDestination.getLongitude());
+            compassfrag.setArguments(bundle);
             fm.replace(R.id.camera_fragment_placeholder, compassfrag, "compass");
             fm.commit();
             currentFragment = "compass";
-        } else if (currentFragment == "compass") {
+
+           // compassfrag.setDest(lastDestination.getLatitude(),lastDestination.getLongitude());
+
+        } else {
             System.out.println("VAIHETAAN CAMERAFRAGMENTTIIN");
             FragmentTransaction fm = getSupportFragmentManager().beginTransaction();
             camerafrag = new CameraFragment();
+            Bundle bundle = new Bundle();
+            bundle.putDouble("latitude", lastDestination.getLatitude());
+            bundle.putDouble("longitude", lastDestination.getLongitude());
+            camerafrag.setArguments(bundle);
             fm.replace(R.id.camera_fragment_placeholder, camerafrag, "camera");
             fm.commit();
+
+            //camerafrag.setDest(lastDestination.getLatitude(),lastDestination.getLongitude());
+
             currentFragment = "camera";
+
         }
+
+
+
     }
 
     @Override
-    public void changeLocation(Double longitude, Double latitude) {
-        if (currentFragment == "compass") {
-            compassfrag.setDest(latitude, longitude);
+    public void changeLocation(Double latitude, Double longitude) {
+
+        lastDestination.setLatitude(latitude);
+        lastDestination.setLongitude(longitude);
+        if (getSupportFragmentManager().findFragmentByTag("compass") != null) {
+            CompassFragment c = (CompassFragment) getSupportFragmentManager().findFragmentByTag("compass");
+            c.setDest(latitude, longitude);
+        } else if (getSupportFragmentManager().findFragmentByTag("camera") != null) {
+            CameraFragment c = (CameraFragment) getSupportFragmentManager().findFragmentByTag("camera");
+            c.setDest(latitude, longitude);
         }
     }
 

@@ -62,13 +62,22 @@ public class CompassFragment extends Fragment implements Compass.OnAngleChangedL
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_compass, container, false);
         compass = new Compass(getActivity(), this) ;
+        Bundle bundle = this.getArguments();
+
+        if (bundle != null) {
+            double lat = bundle.getDouble("latitude", 60);
+            double lon = bundle.getDouble("longitude", 24);
+
+            setDest(lat,lon);
+        }
         compass.arrowView = (ImageView) v.findViewById(R.id.imgPointer);
         compass.tv = (TextView)v.findViewById(R.id.txtTest);
+        compass.tv.setText("waiting...");
 
         Display display = ((WindowManager)getActivity().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         dragUtils.setupViewDrag(v, dragCallback);
 
-        onStart();
+        //onStart();
 
         cornerIcon = (ImageView) v.findViewById(R.id.cornericon);
         cornerIcon.setOnClickListener(new View.OnClickListener() {
@@ -116,8 +125,8 @@ public class CompassFragment extends Fragment implements Compass.OnAngleChangedL
         compass.setCoord(lat, lon);
     }
     public void locationChanged(Double newLat, Double newLon, Double speed) {
-        compass.setMyLocation(newLat, newLon, speed);
 
+        compass.setMyLocation(newLat, newLon, speed);
     }
 
     @Override
@@ -133,7 +142,7 @@ public class CompassFragment extends Fragment implements Compass.OnAngleChangedL
 
     @Override
     public void onAngleChanged(Float azimuth) {
-        Log.i("jee" , String.valueOf(azimuth));
+        //Log.i("jee" , String.valueOf(azimuth));
         ((MainActivity)getActivity()).getAzimuth(azimuth);
     }
 }

@@ -15,7 +15,7 @@
     app:contentInsetEnd="0dp"
     app:contentInsetLeft="0dp"
     app:contentInsetRight="0dp"
-    app:contentInsetStart="0dp">
+    app:contentInsetStart="0dp" >
 
 
 
@@ -26,6 +26,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:background="@color/colorPrimary"
+
 
         >
 
@@ -52,21 +54,22 @@
                 />
 
             <SearchView
+
                 android:id="@+id/searchbar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
-                android:background="@color/colorPrimaryDark"
+
                 android:gravity="left"
                 android:iconifiedByDefault="false"
                 android:inputType="textCapSentences|textNoSuggestions"
                 android:paddingLeft="-22dp"
 
 
-                android:queryHint="Search"
+                android:queryHint="Search for places"
                 android:showDividers="none"
 
-                android:textStyle="bold"
+                android:textStyle="normal"
 
 
                 android:visibility="visible"

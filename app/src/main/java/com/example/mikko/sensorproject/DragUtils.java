@@ -14,7 +14,7 @@ import com.example.mikko.sensorproject.interfaces.DragInterface;
 public class DragUtils {
     public float lastY, lastX;
 
-
+    public boolean down = false;
     public void setupViewDrag(View v, final DragInterface intterfeis) {
         v.setOnTouchListener(new View.OnTouchListener() {
 
@@ -27,6 +27,7 @@ public class DragUtils {
 
                 switch (action) {
                     case (MotionEvent.ACTION_DOWN): {
+                        down = true;
                         int pointer = MotionEventCompat.getActionIndex(event);
                         float y = event.getRawY();
                         float x = event.getRawX();
@@ -60,6 +61,7 @@ public class DragUtils {
 
                     }
                     case (MotionEvent.ACTION_UP): {
+                        down = false;
                         //activePointer = MotionEvent.INVALID_POINTER_ID;
                     }
 

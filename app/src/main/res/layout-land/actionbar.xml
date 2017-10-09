@@ -47,12 +47,13 @@
 
             <SearchView android:id="@+id/searchbar"
 
-                android:showDividers="none"
+
                 android:iconifiedByDefault="false"
                 android:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:queryHint="Search"
+                android:queryHint="Search for places"
+                android:showDividers="none"
                 android:gravity="left"
                 android:paddingLeft="-22dp"
 
@@ -60,10 +61,11 @@
                 app:iconifiedByDefault="false"
 
                 app:queryHint="Search"
+                android:inputType="textCapSentences|textNoSuggestions"
 
 
                 android:textStyle="bold"
-                android:background="@color/colorPrimaryDark"
+                android:background="@color/colorPrimary"
 
 
                 android:layout_alignParentTop="true"
