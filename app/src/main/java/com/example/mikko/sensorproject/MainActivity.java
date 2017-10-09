@@ -146,8 +146,14 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
         myLocation = new Location("myLocation");
 
 
+        /*
+        Start service that listens for location changes
+        */
         startService(new Intent(this, LocationListenerService.class));
 
+        /*
+        Create and register a broadcast receiver to receive user's current location and pass the data to fragments
+        */
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -187,7 +193,9 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
 
 
 
-
+        /*
+        if nothing is saved (e.g app was just started) create and add fragments to activity
+        */
         if (savedInstanceState == null) {
 
             searchbar = (SearchView) findViewById(R.id.searchbar);
@@ -209,6 +217,9 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
 
             fm.commit();
 
+            /*
+            otherwise get data from savedinstance to keep the state (e.g. after orientation change)
+            */
         } else {
 
             for (int i = 0; i < savedInstanceState.getInt("SUGGESTIONS_AMOUNT"); i++) {
@@ -259,6 +270,8 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
 
     @Override
     public void onBackPressed() {
+        
+        //if autocomplete suggestion list is visible, back button will hide it instead of pausing app straight away
         if (autocomplete.getVisibility() != View.VISIBLE) {
             super.onBackPressed();
         }
@@ -280,7 +293,10 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
         return new Point();
     }
 
-
+/*
+gets the amount of pixels moved when user touches screen and drags it in any direction.
+when in portrait mode, param height is used and in landscape mode width is used
+*/
     @Override
     public void dragData(float width, float height) {
         FrameLayout fl = (FrameLayout) findViewById(R.id.camera_fragment_placeholder);
@@ -296,6 +312,7 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
 
         ViewGroup.LayoutParams params = fl.getLayoutParams();
 
+        //change view's height or width and save it in realtime
         if (getResources().getConfiguration().orientation == 1) {
             if (params.height>=62) {
                 params.height += (int) height;
@@ -310,6 +327,10 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
         fl.setLayoutParams(params);
     }
 
+    
+    /*
+    save state before pausing app
+    */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
 
@@ -359,6 +380,9 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
         getSupportActionBar().getCustomView().findViewById(R.id.searchbar).setVisibility(View.VISIBLE);
         getSupportActionBar().getCustomView().findViewById(R.id.titlebar).setVisibility(View.GONE);
 
+        /*
+        when suggestion list item is clicked, it is used to submit a query to google maps api
+        */
         autocomplete.getSuggestionList().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -395,6 +419,8 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
                 return false;
             }
         });
+        
+        
         searchbar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override
@@ -411,7 +437,7 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
                     }
 
                     if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("autocomplete", true)) {
-
+                        //if autocomplete is enabled in settings, start timer after specific time everytime user changes text in searchview
                         timer = new Timer();
                         timer.schedule(new TimerTask() {
 
@@ -428,6 +454,7 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
                                 });
 
                                 try {
+                                    //wait before showing results because user can have pauses while typing
                                     Thread.sleep(1500);
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
@@ -448,7 +475,7 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
                                             //  Log.i("urli on: " , suggestionListItems.get(0));
                                             // getPredictions.executeOnExecutor(threadPoolExecutor, places);
 
-                                            //THread here
+                                            //data is fetched in thread to prevent UI getting stuck
                                             PredThread sc = new PredThread(uiHandler, places);
                                             Thread t = new Thread(sc);
                                             t.start();
@@ -499,6 +526,7 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
         return null;
     }*/
 
+   
     private void submitQuery(String query) {
         if (timer != null) {
             timer.cancel();
@@ -603,10 +631,12 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_manage:
+                //show settings screen
                 getFragmentManager().beginTransaction().replace(android.R.id.content, new PreferencesFragment()).addToBackStack("prefs").commit();
                 autocomplete.setVisibility(View.GONE);
                 break;
             case R.id.action_info:
+                //show/hide info box in map fragment
                 MapSectionFragment f  = (MapSectionFragment) getSupportFragmentManager().findFragmentByTag("map");
                 if (f!= null) {
                     f.toggleInfo();
@@ -617,8 +647,10 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
         return super.onOptionsItemSelected(item);
     }
 
-
-
+    /*
+    this is called when icon in corner of compass or ar fragment is pressed.
+    changes current fragment to another.
+    */
     @Override
     public void changeEvent(String to) {
 
@@ -657,6 +689,9 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
 
     }
 
+    /*
+    gets destination location from map and passes it to either ar or compass fragment
+    */
     @Override
     public void changeLocation(Double latitude, Double longitude) {
 
