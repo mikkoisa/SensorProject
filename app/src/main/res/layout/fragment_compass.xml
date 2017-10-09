@@ -20,20 +20,23 @@
 
         <include layout="@layout/cornericon"
            />
+
     </FrameLayout>
     <FrameLayout android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
+
         <ImageView
             android:id="@+id/imgPointer"
-            android:layout_width="125dp"
-            android:layout_height="125dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
             android:layout_centerInParent="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/arrow_final" />
+            android:layout_margin="25sp"
+            android:src="@drawable/circle3" />
 
 
     </FrameLayout>

@@ -7,9 +7,6 @@ import android.view.View;
 
 import com.example.mikko.sensorproject.interfaces.DragInterface;
 
-/**
- * Created by buckfast on 27.9.2017.
- */
 
 public class DragUtils {
     public float lastY, lastX;

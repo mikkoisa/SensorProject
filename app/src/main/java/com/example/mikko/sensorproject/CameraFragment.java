@@ -2,7 +2,8 @@ package com.example.mikko.sensorproject;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.res.Configuration;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -10,10 +11,6 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.RectF;
-import android.os.Build;
-import android.support.v4.app.Fragment;
-import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -23,20 +20,18 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.MotionEventCompat;
-import android.util.DisplayMetrics;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.util.Size;
-import android.util.SparseIntArray;
 import android.view.Display;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -45,8 +40,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import com.example.mikko.R;
 import com.example.mikko.sensorproject.CompassActivity.Compass;
@@ -55,7 +48,6 @@ import com.example.mikko.sensorproject.interfaces.DestinationInterface;
 import com.example.mikko.sensorproject.interfaces.DragInterface;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class CameraFragment extends Fragment implements Compass.OnAngleChangedListener {
 
@@ -124,8 +116,12 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
         if (bundle != null) {
             double lat = bundle.getDouble("latitude", 60);
             double lon = bundle.getDouble("longitude", 24);
+            Log.i("inio", "CAMERAN BUNDLE: "+lat+", "+lon);
 
             setDest(lat,lon);
+        } else {
+            Log.i("inio", "bundle on nll");
+
         }
 
         drawSurface = (SurfaceView) v.findViewById(R.id.surface);
@@ -188,7 +184,10 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
 
         }
     };
+    public void locationChanged(Double newLat, Double newLon, Double speed) {
 
+        compass.setMyLocation(newLat, newLon, speed);
+    }
     private void openCamera() {
         CameraManager manager = (CameraManager) getActivity().getSystemService(Context.CAMERA_SERVICE);
 
@@ -396,7 +395,9 @@ Log.i("inio", String.valueOf(imageDimension));
 
         Paint paint2 = new Paint();
         paint2.setStyle(Paint.Style.STROKE);
-        paint2.setColor(Color.RED);
+        paint2.setStrokeWidth(10);
+        paint2.setColor(Color.rgb(57,63,174));
+
 
         canvas = sfhTrackHolder.lockCanvas();
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
@@ -442,18 +443,28 @@ Log.i("inio", String.valueOf(imageDimension));
         //The constantly changing target
         if (azimuth < 22.5 && azimuth > -22.5) {
             if (azimuth <10 && azimuth > -10){
-                canvas.drawLine(devicewidth/2 - 200, deviceheight/2, devicewidth/2 , deviceheight/4 , paint );
-                canvas.drawLine(devicewidth/2 , deviceheight/4 , devicewidth/2 +200, deviceheight/2 , paint );
+                canvas.drawLine(devicewidth/2 - 200, deviceheight/2+10, devicewidth/2 , deviceheight/4+10 , paint2 );
+                canvas.drawLine(devicewidth/2 , deviceheight/4+10 , devicewidth/2 +200, deviceheight/2+10 , paint2 );
             } else {
-                canvas.drawCircle(devicewidth / 2 - devicePercent * (azimuthPercent * 100), deviceheight / 2, 100, paint);
-                Log.i("Drew circle", String.valueOf(azimuth));
+                if(azimuth <-10) {
+                    //canvas.drawCircle(devicewidth / 2 - devicePercent * (azimuthPercent * 100), deviceheight / 2, 100, paint2);
+                    canvas.drawLine(devicewidth / 2 - devicePercent * (azimuthPercent * 100), deviceheight / 2, devicewidth / 2 - devicePercent * (azimuthPercent * 100) + 150, deviceheight / 2 - 50, paint2);
+                    canvas.drawLine(devicewidth / 2 - devicePercent * (azimuthPercent * 100), deviceheight / 2, devicewidth / 2 - devicePercent * (azimuthPercent * 100) + 150, deviceheight / 2 + 50, paint2);
+                    Log.i("Drew circle", String.valueOf(azimuth));
+                }
+                else if (azimuth >10 ){
+                    canvas.drawLine(devicewidth / 2 - devicePercent * (azimuthPercent * 100), deviceheight / 2, devicewidth / 2 - devicePercent * (azimuthPercent * 100) - 150, deviceheight / 2 - 50, paint2);
+                    canvas.drawLine(devicewidth / 2 - devicePercent * (azimuthPercent * 100), deviceheight / 2, devicewidth / 2 - devicePercent * (azimuthPercent * 100) - 150, deviceheight / 2 + 50, paint2);
+                }
             }
         }
         else if (azimuth > 22.5 && azimuth < 180) {
-            canvas.drawLine(0,deviceheight/2, 200, deviceheight/2, paint );
+            canvas.drawLine(0,deviceheight/2, 150, deviceheight / 2 - 60, paint2 );
+            canvas.drawLine(0,deviceheight/2, 150, deviceheight / 2 + 60, paint2 );
         }
         else if (azimuth < -22.5 && azimuth > -180) {
-            canvas.drawLine(devicewidth, deviceheight/2, devicewidth-200, deviceheight/2, paint);
+            canvas.drawLine(devicewidth, deviceheight/2, devicewidth-150, deviceheight / 2 - 60, paint2);
+            canvas.drawLine(devicewidth, deviceheight/2, devicewidth-150, deviceheight / 2 + 60, paint2);
         }
 
         sfhTrackHolder.unlockCanvasAndPost(canvas);

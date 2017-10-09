@@ -15,12 +15,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.mikko.R;
-import com.example.mikko.sensorproject.interfaces.ChangeFragmentListener;
-import com.example.mikko.sensorproject.interfaces.DragInterface;
 import com.example.mikko.sensorproject.DragUtils;
 import com.example.mikko.sensorproject.MainActivity;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.LatLng;
+import com.example.mikko.sensorproject.interfaces.ChangeFragmentListener;
+import com.example.mikko.sensorproject.interfaces.DragInterface;
 
 
 public class CompassFragment extends Fragment implements Compass.OnAngleChangedListener{
@@ -72,7 +70,7 @@ public class CompassFragment extends Fragment implements Compass.OnAngleChangedL
         }
         compass.arrowView = (ImageView) v.findViewById(R.id.imgPointer);
         compass.tv = (TextView)v.findViewById(R.id.txtTest);
-        compass.tv.setText("waiting...");
+        compass.tv.setText(" ");
 
         Display display = ((WindowManager)getActivity().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         dragUtils.setupViewDrag(v, dragCallback);

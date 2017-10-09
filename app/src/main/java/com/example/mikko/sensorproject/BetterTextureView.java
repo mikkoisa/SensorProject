@@ -3,13 +3,10 @@ package com.example.mikko.sensorproject;
 import android.content.Context;
 
 
-import android.graphics.Canvas;
+
 import android.util.AttributeSet;
 import android.view.TextureView;
 
-/**
- * Created by buckfast on 21.9.2017.
- */
 public class BetterTextureView extends TextureView {
 
     private int mRatioWidth = 0;

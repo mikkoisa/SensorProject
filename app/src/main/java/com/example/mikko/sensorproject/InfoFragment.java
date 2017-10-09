@@ -13,14 +13,7 @@ import android.widget.TextView;
 
 import com.example.mikko.R;
 import com.example.mikko.sensorproject.interfaces.UpdateInfoListener;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.nearby.messages.Distance;
-import com.google.android.gms.vision.text.Text;
 import com.google.maps.model.Duration;
-
-/**
- * Created by buckfast on 6.10.2017.
- */
 
 public class InfoFragment extends Fragment implements UpdateInfoListener {
 

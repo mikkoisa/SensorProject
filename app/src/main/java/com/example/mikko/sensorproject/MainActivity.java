@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Camera;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
@@ -170,8 +171,14 @@ public class MainActivity extends AppCompatActivity implements DragInterface, Ch
                     CompassFragment compassFragment = (CompassFragment) getSupportFragmentManager().findFragmentByTag("compass");
                     if (compassFragment != null ) {
 
-                        compassFragment.locationChanged((Double.parseDouble(intent.getExtras().get("lat").toString())), Double.parseDouble(intent.getExtras().get("lon").toString()));
+                        compassFragment.locationChanged((Double.parseDouble(intent.getExtras().get("lat").toString())), Double.parseDouble(intent.getExtras().get("lon").toString()), Double.parseDouble(intent.getExtras().get("spd").toString()));
                     }
+
+                CameraFragment cameraFragment = (CameraFragment) getSupportFragmentManager().findFragmentByTag("camera");
+                if (cameraFragment != null ) {
+
+                    cameraFragment.locationChanged((Double.parseDouble(intent.getExtras().get("lat").toString())), Double.parseDouble(intent.getExtras().get("lon").toString()), Double.parseDouble(intent.getExtras().get("spd").toString()));
+                }
 
 
 

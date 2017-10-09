@@ -1,25 +1,18 @@
 package com.example.mikko.sensorproject.CompassActivity;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
-
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.mikko.sensorproject.MapSectionFragment;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
 
 
 
@@ -33,8 +26,8 @@ public class Compass implements SensorEventListener {
     private float[] mGravity = new float[3];
     private float[] mGeomagnetic = new float[3];
 
-    private float azimuth = 0f;
-    private float correctAzimuth = 0;
+    private float azimuth;
+    private float correctAzimuth;
 
     private Context con;
     TextView tv;
@@ -94,7 +87,8 @@ public class Compass implements SensorEventListener {
 
         Double time = calculateDistance();
 
-        tv.setText(String.valueOf(loclat) + "\n" + String.valueOf(loclon) + "\n" + String.valueOf(deslat)+ "\n" + String.valueOf(deslon) + "\n" +String.valueOf(speed) + "\n" +String.valueOf(time)  );
+
+        //tv.setText(String.valueOf(loclat) + "\n" + String.valueOf(loclon) + "\n" + String.valueOf(deslat)+ "\n" + String.valueOf(deslon) + "\n" +String.valueOf(speed) + "\n" +String.valueOf(time)  );
 
     }
 
@@ -145,6 +139,10 @@ public class Compass implements SensorEventListener {
                 if (i>5){
                    // Log.i("Direction: " , String.valueOf(azimuth ) + " " + String.valueOf(destDeg));
                     mAngleListener.onAngleChanged(azimuth);
+                    //Log.i("azimuth", String.valueOf(azimuth));
+                    //Log.i("azimuth", String.valueOf(deslat)+", "+deslon);
+                    Log.i("azimuth", String.valueOf(destDeg));
+
                     i = 0;
                 }
 
