@@ -111,6 +111,7 @@ altRoutes = new ArrayList<>();
         setRetainInstance(true);
 
 
+        //create infobox as child fragment
         info = new InfoFragment();
         FragmentTransaction fm = getChildFragmentManager().beginTransaction();
 
@@ -139,6 +140,8 @@ altRoutes = new ArrayList<>();
 
     }
 
+    
+    //save state for e.g orientation change
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -203,6 +206,7 @@ altRoutes = new ArrayList<>();
         mapview.onResume();
     }
 
+    //uses current location from service to get user's address with geocoder
     private Address getCurrentAddress() {
         List<Address> addresses = null;
         Log.i("inio", "FUUUK " + String.valueOf(currentLoc.getLatitude()) + " " + String.valueOf(currentLoc.getLongitude()));
@@ -261,7 +265,7 @@ altRoutes = new ArrayList<>();
 
 
         if (this.savedInstanceState != null) {
-
+            //get alternative route data from last state
             Log.i("inio", "altroutes amount: "+String.valueOf(savedInstanceState.getInt("altRoutesAmount")));
             Log.i("inio", "current route: "+String.valueOf( savedInstanceState.getInt("currentRoute")));
 
@@ -289,7 +293,7 @@ altRoutes = new ArrayList<>();
 
     }
 
-
+//adds path to map with polyline
     private void addPolyline(String polyline, GoogleMap mMap) {
         List<LatLng> path = PolyUtil.decode(polyline);
         firstPolyLine = path.get(1);
@@ -304,8 +308,11 @@ altRoutes = new ArrayList<>();
 
     private void moveCamera(DirectionsRoute route, GoogleMap mMap) {
         LatLng target = new LatLng(route.legs[0].startLocation.lat, route.legs[0].startLocation.lng);
+        
+        //calculates the bearing angle for map when user makes a query
         Double aLength = (firstPolyLine.longitude - currentLoc.getLongitude());
         Double bLength = (firstPolyLine.latitude - currentLoc.getLatitude());
+        
         float angleA = (float) Math.toDegrees(Math.atan2(aLength, bLength));
         Log.i("inio", String.valueOf(angleA));
 
@@ -320,6 +327,7 @@ altRoutes = new ArrayList<>();
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
 
+            //gets last zoom, tilt etc settings on orientation change
         } else {
             cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(savedInstanceState.getDouble("targetlat"), savedInstanceState.getDouble("targetlon")))
@@ -385,6 +393,8 @@ altRoutes = new ArrayList<>();
         apiRequest.departureTime(now);
         //.await();
 
+        
+        //on query get asynchronously directions info from maps api
         progressBar.setVisibility(View.VISIBLE);
         apiRequest.setCallback(new PendingResult.Callback<DirectionsResult>() {
             @Override
@@ -420,7 +430,7 @@ altRoutes = new ArrayList<>();
                         addMarkers(desLat,desLon, googleMap);
                         progressBar.setVisibility(View.GONE);
 
-
+                        //update info fragment's info
                         updateInfoListener.newInfo(Utils.removeCountry(results.routes[0].legs[0].endAddress), results.routes[0].legs[0].duration,results.routes[0].legs[0].distance);
                         FragmentTransaction ft = getChildFragmentManager().beginTransaction();
                         ft.setCustomAnimations(R.anim.slide_in_from_top, R.anim.slide_out_to_top);
@@ -437,7 +447,7 @@ altRoutes = new ArrayList<>();
 
 
 
-
+            //never happens :-)
             @Override
             public void onFailure(Throwable e) {
                 Log.i("inio", String.valueOf(e));
@@ -460,6 +470,8 @@ altRoutes = new ArrayList<>();
         if (desLat != 0) {
             addMarkers(desLat,desLon, googleMap);
         }
+        
+        //loops through available alternative routes and changes it in map in realtime
         addPolyline(altRoutes.get(currentRoute%altRoutes.size()), googleMap);
 
 
@@ -487,6 +499,8 @@ altRoutes = new ArrayList<>();
         return desLon;
     }
 
+    
+    //get new locaton from service
     public void locationChanged(Double newLat, Double newLon) {
         currentLoc.setLatitude(newLat);
         currentLoc.setLongitude(newLon);
@@ -498,6 +512,8 @@ altRoutes = new ArrayList<>();
                 .target(loc)
                 .build();
                 googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));*/
+        
+        //first run: centers map to current location
         if (!startCentered) {
             progressBar.setVisibility(View.GONE);
             Log.i("inio", "shiiett " + currentLoc.getLatitude() + " " + currentLoc.getLongitude());
@@ -509,7 +525,7 @@ altRoutes = new ArrayList<>();
 
     }
 
-
+    //show/hide info box
     public void toggleInfo() {
         Log.i("inio", "asdsa");
         FragmentTransaction fm = getChildFragmentManager().beginTransaction();
@@ -543,6 +559,7 @@ altRoutes = new ArrayList<>();
         toggleInfo();
     }
 
+    //get next alternative route
     @Override
     public void onNextClick() {
         this.changePolyline();
