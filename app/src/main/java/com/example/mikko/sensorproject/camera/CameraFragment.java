@@ -52,13 +52,16 @@ import java.util.Arrays;
 
 public class CameraFragment extends Fragment implements Compass.OnAngleChangedListener {
 
-
+    //textureview for camera preview
     private BetterTextureView texture;
 
 
     private Compass compass;
-
+    
+    //size of camera preview
     private Size imageDimension;
+    
+    //opened camera device
     protected CameraDevice cameraDevice;
     protected CameraCaptureSession cameraCaptureSessions;
     protected CaptureRequest.Builder captureRequestBuilder;
@@ -66,6 +69,7 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
     int devicewidth;
     int deviceheight;
 
+    
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
 
@@ -75,8 +79,13 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
     private SurfaceHolder sfhTrackHolder;
 
 
+    //let user change the size of camera view
     DragInterface dragCallback;
+    
+    
     ChangeFragmentListener changeFragmentListener;
+   
+    //let user change the size of camera view
     DragUtils dragUtils;
     private DestinationInterface destinationInterface;
     boolean built = false;
@@ -92,6 +101,7 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
 
         dragCallback = (DragInterface) context;
         dragUtils = new DragUtils();
+        //to change fragment to compass
         changeFragmentListener = (ChangeFragmentListener) context;
     }
 
@@ -111,6 +121,7 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
         compass = new Compass(getActivity(), this) ;
         Bundle bundle = this.getArguments();
         if (bundle != null) {
+            //get destination location even when camera is swapped to compass and back
             double lat = bundle.getDouble("latitude", 60);
             double lon = bundle.getDouble("longitude", 24);
             Log.i("inio", "CAMERAN BUNDLE: "+lat+", "+lon);
@@ -122,7 +133,7 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
         }
 
         drawSurface = (SurfaceView) v.findViewById(R.id.surface);
-        drawSurface.setZOrderOnTop(true);    // necessary?
+        drawSurface.setZOrderOnTop(true);    // necessary? -yes
         sfhTrackHolder = drawSurface.getHolder();
         sfhTrackHolder.setFormat(PixelFormat.TRANSPARENT);
 
@@ -164,10 +175,13 @@ public class CameraFragment extends Fragment implements Compass.OnAngleChangedLi
         }
 
         @Override
+        //when view is dragged, texture for camera preview gets stretched
+        //so configureTransform is called everytime texture size changes.
         public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
                 deviceheight = height;
                 devicewidth = width;
 
+                //could optimize to make it smoother... (maybe freeze the camera)
                 configureTransform(width, height);
         }
 
@@ -277,13 +291,12 @@ Log.i("inio", String.valueOf(imageDimension));
     @Override
     public void onResume() {
         super.onResume();
+        
+        //start a background thread so when resuming app, camera will still be available
         startBackgroundThread();
         compass.start();
 
-        // When the screen is turned off and turned back on, the SurfaceTexture is already
-        // available, and "onSurfaceTextureAvailable" will not be called. In that case, we can open
-        // a camera and start preview from here (otherwise, we wait until the surface is ready in
-        // the SurfaceTextureListener).
+        //if screen is turned off and on, check if texture is available to open camera
         if (texture.isAvailable()) {
             openCamera();
         } else {
@@ -298,7 +311,8 @@ Log.i("inio", String.valueOf(imageDimension));
         stopBackgroundThread();
         super.onPause();
     }
-
+    
+    
     private void startBackgroundThread() {
         mBackgroundThread = new HandlerThread("CameraBackground");
         mBackgroundThread.start();
@@ -335,6 +349,7 @@ Log.i("inio", String.valueOf(imageDimension));
         try {
             SurfaceTexture texture = this.texture.getSurfaceTexture();
             assert texture != null;
+            //set size of image buffers (could be used for freezing maybe)
             texture.setDefaultBufferSize(imageDimension.getWidth(), imageDimension.getHeight());
             Surface surface = new Surface(texture);
             captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
@@ -346,7 +361,8 @@ Log.i("inio", String.valueOf(imageDimension));
                     if (null == cameraDevice) {
                         return;
                     }
-                    // When the session is ready, we start displaying the preview.
+                    // When the session is ready, we start displaying the preview
+                    //update preview
                     cameraCaptureSessions = cameraCaptureSession;
                     updatePreview();
                 }
@@ -443,7 +459,8 @@ Log.i("inio", String.valueOf(imageDimension));
         }
     }
 
-
+    //when camera preview size changes, texture needs transformation so aspect ratio stays constant and
+    //preview fills the screen
     private void configureTransform(int viewWidth, int viewHeight) {
         Activity activity = getActivity();
         if (null == texture || null == imageDimension || null == activity) {
