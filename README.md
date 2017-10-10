@@ -10,3 +10,8 @@ The application can also be used similary to a traditional compass, with an arro
 
 Map-view:
 A map of the surrounding area is also visible to the user on the bottom of the screen. This map shows the users location and the optimal route to the target destination.
+
+
+Installation instructions:
+The app permissions need to be enabled manually from the device's settings
+
