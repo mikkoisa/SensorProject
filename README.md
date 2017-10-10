@@ -1,4 +1,4 @@
-Sensor Project: Pedestrian guiding app
+**Sensor Project: Pedestrian guiding app**
 
 The app shows the way to the user's chosen location/address by using different methods.
 
@@ -12,7 +12,7 @@ Map-view:
 A map of the surrounding area is also visible to the user on the bottom of the screen. This map shows the users location and the optimal route to the target destination.
 
 
-Setup instructions:
+**Setup instructions:**
 
 The app permissions need to be enabled manually from the device's settings
 
